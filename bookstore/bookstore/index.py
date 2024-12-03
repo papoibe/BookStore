@@ -5,5 +5,6 @@ from bookstore import app, db
 def home():
     return "Hello, Flask!"
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    with app.app_context():
+        app.run(debug=True)
