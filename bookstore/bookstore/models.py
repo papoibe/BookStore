@@ -2,15 +2,12 @@ from sqlalchemy import (
     Column,
     Integer,
     String,
-    Boolean,
-    Float,
     ForeignKey,
     Enum,
     DateTime,
 )
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 from bookstore import app, db
-from flask_login import UserMixin
 from enum import Enum as PyEnum
 
 
@@ -25,24 +22,10 @@ class PhuongThucThanhToan(PyEnum):
     THANH_TOAN_TRUC_TIEP = "Thanh toán trực tiếp"
 
 
-class Sach(db.Model):
-    ma_sach = Column(Integer, primary_key=True, autoincrement=True)
-    ten_sach = Column(String(50), nullable=False, unique=True)
-    gia = Column(Integer, default=0)
-    so_luong = Column(Integer)
-    the_loai = relationship("SachTheLoai", backref="sach")
-    tac_gia = relationship("SachTacGia", backref="sach")
-    chi_tiet_phieu_nhap = relationship("ChiTietPhieuNhap", backref="sach")
-    chi_tiet_don_hang = relationship("ChiTietDonHang", backref="sach")
-
-    def __str__(self):
-        return self.name
-
-
 class TheLoai(db.Model):
     ma_the_loai = Column(Integer, primary_key=True, autoincrement=True)
     ten_the_loai = Column(String(50), unique=True)
-    sach = relationship("SachTheLoai", backref="theloai")
+    ma_sach = relationship("MaSach", backref="theloai")
 
     def __str__(self):
         return self.name
@@ -51,22 +34,21 @@ class TheLoai(db.Model):
 class TacGia(db.Model):
     ma_tac_gia = Column(Integer, primary_key=True, autoincrement=True)
     ten_tac_gia = Column(String(50))
+    ma_sach = relationship("MaSach", backref="tacgia")
 
     def __str__(self):
         return self.name
 
 
-class SachTheLoai(db.Model):
-    ma_sach = Column(Integer, ForeignKey(Sach.ma_sach), primary_key=True)
-    ma_the_loai = Column(Integer, ForeignKey(TheLoai.ma_the_loai), primary_key=True)
-
-    def __str__(self):
-        return self.name
-
-
-class SachTacGia(db.Model):
-    ma_sach = Column(Integer, ForeignKey(Sach.ma_sach), primary_key=True)
-    ma_tac_gia = Column(Integer, ForeignKey(TacGia.ma_tac_gia), primary_key=True)
+class Sach(db.Model):
+    ma_sach = Column(Integer, primary_key=True, autoincrement=True)
+    ten_sach = Column(String(50), nullable=False, unique=True)
+    gia = Column(Integer, default=0)
+    so_luong = Column(Integer)
+    ma_the_loai = Column(Integer, ForeignKey(TheLoai.ma_the_loai))
+    ma_tac_gia = Column(Integer, ForeignKey(TacGia.ma_tac_gia))
+    chi_tiet_phieu_nhap = relationship("ChiTietPhieuNhap", backref="sach")
+    chi_tiet_don_hang = relationship("ChiTietDonHang", backref="sach")
 
     def __str__(self):
         return self.name
