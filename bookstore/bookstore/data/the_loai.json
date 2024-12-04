@@ -1,0 +1,14 @@
+[
+    {
+        "ma_the_loai":1,
+        "ten_the_loai":"Truyện ngắn"
+    },
+    {
+        "ma_the_loai":2,
+        "ten_the_loai":"Tiểu thuyết"
+    },
+    {
+        "ma_the_loai":3,
+        "ten_the_loai":"Thơ"
+    }
+]
