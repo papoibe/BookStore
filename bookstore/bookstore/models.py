@@ -152,12 +152,12 @@ if __name__ == "__main__":
         import json
 
         #  --- Add tác giả ----
-        # with open('data/tac_gia.json', encoding='utf-8') as f:
-        #     tac_gia = json.load(f)
-        #     for t in tac_gia :
-        #         tac = TacGia(**t)
-        #         db.session.add(tac)
-        # db.session.commit()
+        with open('data/tac_gia.json', encoding='utf-8') as f:
+            tac_gia = json.load(f)
+            for t in tac_gia :
+                tac = TacGia(**t)
+                db.session.add(tac)
+        db.session.commit()
 
         # --- Add thể loại ---
         with open('data/the_loai.json', encoding='utf-8') as f:
@@ -168,19 +168,19 @@ if __name__ == "__main__":
         db.session.commit()
 
         #  ----  Add Sach ---
-        # with open("data/sach.json", encoding="utf-8") as f:
-        #     sach = json.load(f)
-        #     for s in sach:
-        #         sach = Sach(**s)
-        #         db.session.add(sach)
-        # db.session.commit()
+        with open("data/sach.json", encoding="utf-8") as f:
+            sach = json.load(f)
+            for s in sach:
+                sach = Sach(**s)
+                db.session.add(sach)
+        db.session.commit()
 
     # Add admin
-    #     import hashlib
-    #
-    #     u = NhanVien(username="admin",
-    #                  password=str(hashlib.md5("123".encode('utf-8')).hexdigest()),
-    #                  ten_nhan_vien="haunguyen",
-    #                  vai_tro=VaiTro.QUAN_LY)
-    #     db.session.add(u)
-    #     db.session.commit()
+        import hashlib
+
+        u = NhanVien(username="admin",
+                     password=str(hashlib.md5("123".encode('utf-8')).hexdigest()),
+                     ten_nhan_vien="haunguyen",
+                     vai_tro=VaiTro.QUAN_LY)
+        db.session.add(u)
+        db.session.commit()
