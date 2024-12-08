@@ -18,36 +18,46 @@ def load_user(user_id):
     return dao.get_user_by_id(user_id)
 
 
-@app.route('/login', methods=['get', 'post'])
-def login_my_user():
-    if request.method.__eq__('username'):
+@app.route("/login", methods=['get', 'post'])
+def login_process():
+    if current_user.is_authenticated:
+        return redirect("/")
+    if request.method.__eq__('POST'):
         username = request.form.get('username')
         password = request.form.get('password')
-        if username.__eq__("admin") and password.__eq__("123"):
+
+        u = dao.auth_user(username=username, password=password)
+        if u:
+            login_user(u)
             return redirect('/')
+
     return render_template('login.html')
 
 
-@app.route('/register', methods=["get", "post"])
-def register_user():
-    err_msg = None
+@app.route('/register', methods=['get', 'post'])
+def register_process():
+    err_msg = ''
     if request.method.__eq__('POST'):
         password = request.form.get('password')
         confirm = request.form.get('confirm')
+
         if password.__eq__(confirm):
-            ava_path = None
-            name = request.form.get('name')
-            username = request.form.get('username')
+            data = request.form.copy()
+            del data['confirm']
+
             avatar = request.files.get('avatar')
-            if avatar:
-                res = cloudinary.uploader.upload(avatar)
-                ava_path = res['secure_url']
-            dao.add_user(name=name, username=username, password=password, avatar=ava_path)
+            dao.add_user(avatar=avatar, **data)
+
             return redirect('/login')
         else:
-            err_msg = "Mật khẩu không khớp!"
+            err_msg = 'Mật khẩu không khớp!'
+
     return render_template('register.html', err_msg=err_msg)
 
+@app.route('/logout')
+def logout_my_user():
+    logout_user()
+    return redirect('/login')
 
 if __name__ == "__main__":
     with app.app_context():
