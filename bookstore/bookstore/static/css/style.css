@@ -71,5 +71,74 @@ footer .footer-text p {
     margin: 5px 0;
 }
 
+/* Đặt container của form */
+.form-container {
+    display: flex;
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: center;    /* Căn giữa theo chiều dọc */
+    min-height: 60vh;      /* Chiều cao bằng với chiều cao màn hình */
+    background-color: #f3f4f6; /* Tùy chỉnh nền */
+}
 
+/* Kiểu dáng cho form */
+.login100-form {
+    background: #ffffff;   /* Màu nền trắng */
+    padding: 20px 30px;    /* Thêm khoảng cách bên trong */
+    border-radius: 10px;   /* Góc bo tròn */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Hiệu ứng đổ bóng */
+    width: 100%;           /* Để thích nghi với kích thước container */
+    max-width: 400px;      /* Giới hạn độ rộng */
+}
+
+.btn-face, .btn-google {
+    display: flex;               /* Sử dụng Flexbox */
+    justify-content: center;     /* Căn giữa theo chiều ngang */
+    align-items: center;         /* Căn giữa theo chiều dọc */
+    width: 100%;                 /* Chiều rộng nút */
+    padding: 10px;               /* Khoảng cách bên trong nút */
+    margin-bottom: 15px;         /* Khoảng cách giữa các nút */
+    text-decoration: none;       /* Loại bỏ gạch chân */
+    font-size: 16px;             /* Kích thước chữ */
+    border: 1px solid #ddd;      /* Đường viền */
+    border-radius: 5px;          /* Bo góc */
+    color: #ffffff;              /* Màu chữ */
+}
+
+
+
+.btn-face {
+    background-color: #3b5998;   /* Màu nền Facebook */
+}
+
+.btn-google {
+    background-color: #db4437;   /* Màu nền Google */
+}
+
+.btn-face:hover, .btn-google:hover {
+    opacity: 0.9;                /* Hiệu ứng khi hover */
+}
+
+.fa {
+    margin-left: 10px;           /* Khoảng cách giữa icon và chữ */
+}
+
+/* Kiểu dáng cho tiêu đề ĐĂNG NHẬP */
+.login-title {
+    font-size: 36px;              /* Kích thước chữ lớn */
+    font-weight: bold;            /* Tăng độ đậm */
+    color: #CB9DF0;               /* Màu xanh nhạt (Bootstrap text-info) */
+    text-align: center;           /* Căn giữa chữ */
+    text-transform: uppercase;    /* Chuyển thành chữ in hoa */
+    margin-top: 20px;             /* Khoảng cách phía trên */
+    margin-bottom: 20px;          /* Khoảng cách phía dưới */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Hiệu ứng đổ bóng nhẹ */
+    font-family: 'Poppins', sans-serif; /* Font hiện đại */
+}
+
+/* Hiệu ứng khi hover */
+.login-title:hover {
+    color: #0056b3;               /* Màu xanh đậm hơn khi hover */
+    transform: scale(1.05);       /* Phóng to nhẹ chữ khi hover */
+    transition: all 0.3s ease;    /* Hiệu ứng mượt khi hover */
+}
 

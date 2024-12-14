@@ -142,28 +142,28 @@ if __name__ == "__main__":
         import json
 
         #  --- Add tác giả ----
-        # with open('data/tac_gia.json', encoding='utf-8') as f:
-        #     tac_gia = json.load(f)
-        #     for t in tac_gia :
-        #         tac = TacGia(**t)
-        #         db.session.add(tac)
-        # db.session.commit()
+        with open('data/tac_gia.json', encoding='utf-8') as f:
+            tac_gia = json.load(f)
+            for t in tac_gia :
+                tac = TacGia(**t)
+                db.session.add(tac)
+        db.session.commit()
 
         # --- Add thể loại ---
-        # with open('data/the_loai.json', encoding='utf-8') as f:
-        #     the_loai = json.load(f)
-        #     for t in the_loai :
-        #         the = TheLoai(**t)
-        #         db.session.add(the)
-        # db.session.commit()
+        with open('data/the_loai.json', encoding='utf-8') as f:
+            the_loai = json.load(f)
+            for t in the_loai :
+                the = TheLoai(**t)
+                db.session.add(the)
+        db.session.commit()
 
         #  ----  Add Sach ---
-        # with open("data/sach.json", encoding="utf-8") as f:
-        #     sach = json.load(f)
-        #     for s in sach:
-        #         sach = Sach(**s)
-        #         db.session.add(sach)
-        # db.session.commit()
+        with open("data/sach.json", encoding="utf-8") as f:
+            sach = json.load(f)
+            for s in sach:
+                sach = Sach(**s)
+                db.session.add(sach)
+        db.session.commit()
 
     # Add admin
         import hashlib
