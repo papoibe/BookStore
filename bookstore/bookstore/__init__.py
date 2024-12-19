@@ -12,6 +12,10 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 db=SQLAlchemy(app)
 login = LoginManager(app)
 
+so_luong_nhap_vao_kho_it_nhat=10
+quy_dinh_de_duoc_nhap_vao_kho=10
+
+
 cloudinary.config(cloud_name='dwmngambu',
                   api_key='392636472975875',
                   api_secret='w56y3d7LMkkD4WPbsnYcNHWB6UQ')

@@ -1,0 +1,77 @@
+{%extends 'layout/base.html'%}
+
+{%block content%}
+<h2>Phiếu Nhập Sách</h2>
+    <form method="POST" action="/kho">
+        <label for="date">Ngày nhập:</label>
+        <input type="date" id="date" name="date">
+
+        <table id="bookTable">
+            <thead>
+                <tr>
+                    <th>Sách</th>
+                    <th>Số lượng</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" name="book[]" placeholder="Mã sách"></td>
+                    <td><input type="number" name="quantity[]" min="1" placeholder="0"></td>
+                    <td><button type="button" class="deleteBtn">Xóa</button></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="add-button">
+            <button type="button" id="addRow">Thêm</button>
+        </div>
+        {% if err_msg %}
+        <div class="alert alert-danger" id="errorAlert">
+            {{ err_msg }}
+        </div>
+
+        {% endif %}
+
+        {% if success_msg %}
+        <div class="alert alert-success" id="successAlert">
+             {{ success_msg }}
+        </div>
+        {% endif %}
+        <div class="bottom-buttons">
+            <button type="submit">Nhập sách</button>
+            <button type="button">In phiếu</button>
+        </div>
+    </form>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const addButton = document.getElementById('addRow');
+    const tableBody = document.querySelector('#bookTable tbody');
+
+    // Xử lý sự kiện thêm hàng mới
+    addButton.addEventListener('click', function () {
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td><input type="text" name="book[]" placeholder="Mã sách"></td>
+            <td><input type="number" name="quantity[]" min="1" placeholder="0"></td>
+            <td><button type="button" class="deleteBtn">Xóa</button></td>
+        `;
+        tableBody.appendChild(newRow);
+    });
+
+
+    tableBody.addEventListener('click', function (event) {
+
+        if (event.target && event.target.classList.contains('deleteBtn')) {
+            const row = event.target.closest('tr');
+            row.remove();
+        }
+    });
+
+
+
+});
+</script>
+
+{%endblock%}

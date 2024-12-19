@@ -8,7 +8,8 @@ admin = Admin(app, name="E-commerce Website", template_mode="bootstrap4")
 
 
 class TheLoaiView(ModelView):
-    column_list = ['ma_the_loai', 'ten_the_loai']
-    column_searchable_list = ['ma_the_loai', 'ten_the_loai']
+    column_list = ["ma_the_loai", "ten_the_loai"]
+    column_searchable_list = ["ma_the_loai", "ten_the_loai"]
+
 
 admin.add_view(TheLoaiView(TheLoai, db.session))

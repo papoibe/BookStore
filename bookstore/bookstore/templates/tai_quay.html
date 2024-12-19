@@ -1,0 +1,160 @@
+{%extends 'layout/base.html'%}
+
+{%block content%}
+<h2>Lập Hóa Đơn</h2>
+<form method="POST" action="/tai_quay">
+    <label for="date">Ngày lập hóa đơn:</label>
+    <input type="date" id="date" name="date">
+
+    <table id="invoiceTable">
+        <thead>
+            <tr>
+                <th>Mã sách</th>
+                <th>Tên sách</th>
+                <th>Đơn giá</th>
+                <th>Số lượng</th>
+                <th>Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="text" name="book[]" placeholder="Mã sách"oninput="fetchBookInfo(this)"></td>
+                <td><input type="text" name="book_name[]" placeholder="Tên sách"></td>
+                <td><input type="number" name="price[]"  placeholder="Đơn giá"></td>
+                <td><input type="number" name="quantity[]" min="1" placeholder="Số lượng"></td>
+                <td><input type="number" name="total[]" readonly placeholder="Thành tiền"></td>
+                <td><button type="button" class="deleteBtn">Xóa</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="add-button">
+        <button type="button" id="addRow">Thêm</button>
+    </div>
+
+    <div id="summary">
+        <p>Tổng số lượng: <span id="totalQuantity">0</span></p>
+        <p>Tổng tiền: <span id="totalAmount">0</span> VNĐ</p>
+    </div>
+
+    {% if err_msg %}
+    <div class="alert alert-danger" id="errorAlert">
+        {{ err_msg }}
+    </div>
+    {% endif %}
+
+    {% if success_msg %}
+    <div class="alert alert-success" id="successAlert">
+        {{ success_msg }}
+    </div>
+    {% endif %}
+
+    <div class="bottom-buttons">
+        <button type="submit">Lập hóa đơn</button>
+        <button type="button" onclick="window.print()">In hóa đơn</button>
+    </div>
+</form>
+
+<script>
+    // Thêm hàng mới
+    document.getElementById('addRow').addEventListener('click', function() {
+        const tableBody = document.querySelector('#invoiceTable tbody');
+        const newRow = document.createElement('tr');
+
+        newRow.innerHTML = `
+            <td><input type="text" name="book_code[]" placeholder="Mã sách" oninput="fetchBookInfo(this)"></td>
+            <td><input type="text" name="book_name[]" placeholder="Tên sách"></td>
+            <td><input type="number" name="price[]" placeholder="Đơn giá"></td>
+            <td><input type="number" name="quantity[]" min="1" placeholder="Số lượng"></td>
+            <td><input type="number" name="total[]" readonly placeholder="Thành tiền"></td>
+            <td><button type="button" class="deleteBtn">Xóa</button></td>
+        `;
+        tableBody.appendChild(newRow);
+
+        // Cập nhật tổng sau khi thêm
+        updateTotal();
+    });
+
+    // Xóa hàng
+    document.querySelector('#invoiceTable').addEventListener('click', function(event) {
+        if (event.target.classList.contains('deleteBtn')) {
+            const row = event.target.closest('tr');
+            row.remove();
+            updateTotal();
+        }
+    });
+
+    // Cập nhật thành tiền khi thay đổi giá hoặc số lượng
+    document.querySelector('#invoiceTable').addEventListener('input', function(event) {
+        if (event.target.name === 'price[]' || event.target.name === 'quantity[]') {
+            const row = event.target.closest('tr');
+            const price = parseFloat(row.querySelector('[name="price[]"]').value) || 0;
+            const quantity = parseInt(row.querySelector('[name="quantity[]"]').value) || 0;
+            const total = price * quantity;
+            row.querySelector('[name="total[]"]').value = total.toFixed(2);
+            updateTotal();
+        }
+    });
+
+    // Tính tổng số lượng và tổng tiền
+    function updateTotal() {
+        let totalQuantity = 0;
+        let totalAmount = 0;
+        const rows = document.querySelectorAll('#invoiceTable tbody tr');
+
+        rows.forEach(function(row) {
+            const quantity = parseInt(row.querySelector('[name="quantity[]"]').value) || 0;
+            const total = parseFloat(row.querySelector('[name="total[]"]').value) || 0;
+
+            totalQuantity += quantity;
+            totalAmount += total;
+        });
+
+        document.getElementById('totalQuantity').textContent = totalQuantity;
+        document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
+    }
+</script>
+
+<script>
+     async function fetchBookInfo(inputElement) {
+        const row = inputElement.closest('tr');
+        const maSach = inputElement.value;
+
+        try {
+            const response = await fetch('/api/sach', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ma_sach: maSach })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    row.querySelector('[name="book_name[]"]').value = data.ten_sach;
+                    row.querySelector('[name="price[]"]').value = data.gia;
+                    updateTotal();
+                } else {
+                    resetRowFields(row);
+                }
+            } else {
+                resetRowFields(row);
+            }
+        } catch (error) {
+            console.error('Lỗi khi lấy thông tin sách:', error);
+            alert('Đã xảy ra lỗi. Vui lòng thử lại!');
+        }
+    }
+
+    // Hàm đặt lại các trường thông tin trong hàng
+    function resetRowFields(row) {
+        row.querySelector('[name="book_name[]"]').value = '';
+        row.querySelector('[name="price[]"]').value = '';
+        updateTotal();
+    }
+</script>
+
+
+
+{%endblock%}
