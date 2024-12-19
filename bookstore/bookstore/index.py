@@ -1,16 +1,19 @@
 import math
 
-from Tools.scripts.var_access_benchmark import read_dict
 from flask import render_template, request, redirect
 import dao
 from bookstore import app, admin, login
 from flask_login import login_user, logout_user, current_user
 import cloudinary.uploader
 
-
 @app.route('/')
-def home():
-    return render_template('index.html')
+def index():
+    q = request.args.get("q")
+    cate_id = request.args.get("ma_the_loai")
+    page = request.args.get("page")
+    sach = dao.load_sach(q=q, cate_id=cate_id, page=page)
+    total = dao.count_sach()
+    return render_template('index.html', sach=sach, pages=math.ceil(total/app.config['PAGE_SIZE']))
 
 
 @login.user_loader
@@ -58,6 +61,14 @@ def register_process():
 def logout_my_user():
     logout_user()
     return redirect('/login')
+
+@app.route('/sach/<int:id>')
+def details(id):
+    sach = dao.load_sach_by_id(id)
+    return render_template('product-details.html', sach = sach)
+
+
+
 
 if __name__ == "__main__":
     with app.app_context():

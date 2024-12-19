@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-sm" style="background-color: #F2F9FF ;">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">Nhà Sách Hoàng Tử Bé</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+        <button class="navbar-toggler" data-bs-target="#collapsibleNavbar" data-bs-toggle="collapse" type="button">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
@@ -10,9 +10,8 @@
                 <a class="nav-link active" href="/">Trang chủ</a>
 
 
-
                 <form class="d-flex">
-                    <input class="form-control me-2" name="q" type="text" placeholder="Nhập từ khóa...">
+                    <input class="form-control me-2" name="q" placeholder="Nhập từ khóa..." type="text">
                     <button class="btn btn-primary" type="submit">Tìm</button>
                 </form>
                 {% for c in categories%}
@@ -25,7 +24,7 @@
             {%if current_user.is_authenticated%}
             <li class="nav-item">
                 <a class="nav-link text-info" href="/login">
-                    <img src="{{current_user.avatar}}" width="25" class="rounded img-fluid">
+                    <img class="rounded img-fluid" src="{{current_user.avatar}}" width="25">
                     Chào {{current_user.name}}!
                 </a>
             </li>
