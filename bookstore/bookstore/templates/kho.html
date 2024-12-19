@@ -9,13 +9,15 @@
         <table id="bookTable">
             <thead>
                 <tr>
-                    <th>Sách</th>
+                    <th>Mã Sách</th>
+                    <th>Tên sách</th>
                     <th>Số lượng</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td><input type="text" name="book[]" placeholder="Mã sách"></td>
+                    <td><input type="text" name="book[]" placeholder="Mã sách" oninput="fetchBookInfo(this)"></td>
+                    <td><input type="text" name="book_name[]" placeholder="Tên sách"></td>
                     <td><input type="number" name="quantity[]" min="1" placeholder="0"></td>
                     <td><button type="button" class="deleteBtn">Xóa</button></td>
                 </tr>
@@ -53,7 +55,8 @@
     addButton.addEventListener('click', function () {
         const newRow = document.createElement('tr');
         newRow.innerHTML = `
-            <td><input type="text" name="book[]" placeholder="Mã sách"></td>
+            <td><input type="text" name="book[]" placeholder="Mã sách"oninput="fetchBookInfo(this)"></td>
+            <td><input type="text" name="book_name[]" placeholder="Tên sách"></td>
             <td><input type="number" name="quantity[]" min="1" placeholder="0"></td>
             <td><button type="button" class="deleteBtn">Xóa</button></td>
         `;
@@ -74,4 +77,39 @@
 });
 </script>
 
+<script>
+     async function fetchBookInfo(inputElement) {
+        const row = inputElement.closest('tr');
+        const maSach = inputElement.value;
+
+        try {
+            const response = await fetch('/api/sach', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ma_sach: maSach })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    row.querySelector('[name="book_name[]"]').value = data.ten_sach;
+                } else {
+                    resetRowFields(row);
+                }
+            } else {
+                resetRowFields(row);
+            }
+        } catch (error) {
+            console.error('Lỗi khi lấy thông tin sách:', error);
+            alert('Đã xảy ra lỗi. Vui lòng thử lại!');
+        }
+    }
+
+    // Hàm đặt lại các trường thông tin trong hàng
+    function resetRowFields(row) {
+        row.querySelector('[name="book_name[]"]').value = '';
+    }
+</script>
 {%endblock%}

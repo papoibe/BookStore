@@ -47,7 +47,7 @@ class Sach(db.Model):
     ten_sach = Column(String(50), nullable=False, unique=True)
     gia = Column(Integer, default=0)
     so_luong = Column(Integer)
-    image = Column(String(100))
+    image = Column(String(300))
     ma_the_loai = Column(Integer, ForeignKey(TheLoai.ma_the_loai))
     ma_tac_gia = Column(Integer, ForeignKey(TacGia.ma_tac_gia))
     chi_tiet_phieu_nhap = relationship("ChiTietPhieuNhap", backref="sach")
@@ -166,46 +166,46 @@ if __name__ == "__main__":
         import json
 
         #  --- Add tác giả ----
-        # with open('data/tac_gia.json', encoding='utf-8') as f:
-        #     tac_gia = json.load(f)
-        #     for t in tac_gia :
-        #         tac = TacGia(**t)
-        #         db.session.add(tac)
-        # db.session.commit()
+        with open('data/tac_gia.json', encoding='utf-8') as f:
+            tac_gia = json.load(f)
+            for t in tac_gia :
+                tac = TacGia(**t)
+                db.session.add(tac)
+        db.session.commit()
 
         # --- Add thể loại ---
-        # with open('data/the_loai.json', encoding='utf-8') as f:
-        #     the_loai = json.load(f)
-        #     for t in the_loai :
-        #         the = TheLoai(**t)
-        #         db.session.add(the)
-        # db.session.commit()
+        with open('data/the_loai.json', encoding='utf-8') as f:
+            the_loai = json.load(f)
+            for t in the_loai :
+                the = TheLoai(**t)
+                db.session.add(the)
+        db.session.commit()
 
         #  ----  Add Sach ---
-        # with open("data/sach.json", encoding="utf-8") as f:
-        #     sach = json.load(f)
-        #     for s in sach:
-        #         sach = Sach(**s)
-        #         db.session.add(sach)
-        # db.session.commit()
+        with open("data/sach.json", encoding="utf-8") as f:
+            sach = json.load(f)
+            for s in sach:
+                sach = Sach(**s)
+                db.session.add(sach)
+        db.session.commit()
 
         # Add admin
         import hashlib
 
-        # u = User(username="admin",
-        #              password=str(hashlib.md5("123".encode('utf-8')).hexdigest()),
-        #              name="haunguyen",
-        #              user_role=UserRole.ADMIN)
+        u = User(username="admin",
+                     password=str(hashlib.md5("123".encode('utf-8')).hexdigest()),
+                     name="haunguyen",
+                     user_role=UserRole.ADMIN)
 
-        # db.session.add(u)
-        # db.session.commit()
-        # x = User(username="an",
-        #          password=str(hashlib.md5("123".encode('utf-8')).hexdigest()),
-        #          name="an",
-        #          user_role=UserRole.KHO)
-        #
-        # db.session.add(x)
-        # db.session.commit()
+        db.session.add(u)
+        db.session.commit()
+        x = User(username="an",
+                 password=str(hashlib.md5("123".encode('utf-8')).hexdigest()),
+                 name="an",
+                 user_role=UserRole.KHO)
+
+        db.session.add(x)
+        db.session.commit()
 
         y = User(
             username="taiquay",

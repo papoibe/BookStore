@@ -1,14 +1,11 @@
 import copy
 import math
 
-<<<<<<< HEAD
 from Tools.scripts.var_access_benchmark import read_dict
 from flask import render_template, request, redirect, session, jsonify
 from sqlalchemy import false
 
-=======
-from flask import render_template, request, redirect
->>>>>>> 9e9ddbeb9000382b18ab542741d9eb30a0b5d5b9
+
 import dao
 from bookstore import (
     app,
@@ -23,12 +20,8 @@ import cloudinary.uploader
 from flask_login import UserMixin
 from sqlalchemy.orm import relationship
 
-<<<<<<< HEAD
 
-@app.route("/")
-def home():
-    return render_template("index.html")
-=======
+
 @app.route('/')
 def index():
     q = request.args.get("q")
@@ -37,7 +30,6 @@ def index():
     sach = dao.load_sach(q=q, cate_id=cate_id, page=page)
     total = dao.count_sach()
     return render_template('index.html', sach=sach, pages=math.ceil(total/app.config['PAGE_SIZE']))
->>>>>>> 9e9ddbeb9000382b18ab542741d9eb30a0b5d5b9
 
 
 @login.user_loader
@@ -74,28 +66,27 @@ def kho():
     if request.method == "POST":
         ma_sach = request.form.getlist("book[]")
         so_luong = request.form.getlist("quantity[]")
-
+        date = request.form.get("date")
         ## Kiểm tra hợp lệ trước khi nhập
-
+        if not date:
+            err_msg = "Chưa nhập ngày"
+            return render_template(
+                "kho.html", err_msg=err_msg, success_msg=success_msg
+            )
         flag = True
 
         for i in range(len(ma_sach)):
             sach = dao.get_sach_by_id(ma_sach[i])
-            if sach == None:
-                false = False
-                err_msg = "Sách không tồn tại"
-                return render_template(
-                    "kho.html", err_msg=err_msg, success_msg=success_msg
-                )
+
             if int(so_luong[i]) < so_luong_nhap_vao_kho_it_nhat:
                 flag = False
-                err_msg = "Chưa đạt lượng sách tối thiểu"
+                err_msg = f"Mã:{sach.ma_sach}- {sach.ten_sach} nhập chưa đạt lượng sách tối thiểu ({so_luong_nhap_vao_kho_it_nhat})."
                 return render_template(
                     "kho.html", err_msg=err_msg, success_msg=success_msg
                 )
             if sach.get_so_luong() > quy_dinh_de_duoc_nhap_vao_kho:
                 flag = False
-                err_msg = "Chưa cần nhập sách"
+                err_msg = f"Mã:{sach.ma_sach}- {sach.ten_sach} chưa cần nhập"
                 return render_template(
                     "kho.html", err_msg=err_msg, success_msg=success_msg
                 )
@@ -116,14 +107,15 @@ def tai_quay():
     success_msg = ""
     if request.method == "POST":
         date = request.form.get("date")
+        ma_sach = request.form.getlist("book[]")
+        so_luong = request.form.getlist("quantity[]")
+        gia = request.form.getlist("price[]")
         if not date:
             err_msg = "Chưa nhập ngày"
             return render_template(
                 "tai_quay.html", err_msg=err_msg, success_msg=success_msg
             )
-        ma_sach = request.form.getlist("book[]")
-        so_luong = request.form.getlist("quantity[]")
-        gia = request.form.getlist("price[]")
+
         id = dao.add_hoa_don(current_user.get_id(), date)
         for i in range(len(ma_sach)):
             dao.add_chi_tiet_hoa_don(
