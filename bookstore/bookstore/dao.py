@@ -7,8 +7,46 @@ from models import *
 from bookstore import db
 
 
+<<<<<<< HEAD
 def get_user_by_id(id):
     return User.query.get(id)
+=======
+# đang tạo load sach cho index sach
+def load_sach(q=None, cate_id=None, page=None):
+    with open('data/sach.json', encoding='utf-8') as f:
+        sach = json.load(f)
+        if q:
+            sach = [p for p in sach if p["name"].find(q)>=0]
+        if cate_id:
+            sach = [p for p in sach if p["category_id"].__eq__(int(cate_id))]
+        return sach
+
+    query = Sach.query
+
+    if q:
+        query = query.filter(Sach.name.contains(q))
+    if cate_id:
+        query = query.filter(Sach.category_id.__eq__(cate_id))
+
+    if page:
+        page_size = app.config['PAGE_SIZE']
+        start = (int(page)-1)*page_size
+        query = query.slice(start, start+page_size)
+
+    return query.all()
+
+
+def count_sach():
+    return Sach.query.count()
+
+
+
+def get_user_by_id(id):
+    return User.query.get(id)
+
+def auth_user(username, password, role=None):
+    password = str(hashlib.md5(password.encode('utf-8')).hexdigest())
+>>>>>>> 9e9ddbeb9000382b18ab542741d9eb30a0b5d5b9
 
 
 def auth_user(username, password, user_role=None):
@@ -34,6 +72,7 @@ def add_user(name, username, password, avatar):
     db.session.add(u)
     db.session.commit()
 
+<<<<<<< HEAD
 
 def get_sach_by_id(id):
     s = Sach.query.filter(Sach.ma_sach == id).first()
@@ -69,3 +108,11 @@ def add_chi_tiet_hoa_don(id, ma_sach, so_luong, gia):
     chi_tiet = ChiTietHoaDon(ma_hoa_don=id, ma_sach=ma_sach, so_luong=so_luong, gia=gia)
     db.session.add(chi_tiet)
     db.session.commit()
+=======
+def load_sach_by_id(id):
+    with open('data/products.json', encoding='utf-8') as f:
+        sach = json.load(f)
+        for p in sach:
+            if p["id"] == id:
+                return p
+>>>>>>> 9e9ddbeb9000382b18ab542741d9eb30a0b5d5b9

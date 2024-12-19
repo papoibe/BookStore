@@ -1,10 +1,14 @@
 import copy
 import math
 
+<<<<<<< HEAD
 from Tools.scripts.var_access_benchmark import read_dict
 from flask import render_template, request, redirect, session, jsonify
 from sqlalchemy import false
 
+=======
+from flask import render_template, request, redirect
+>>>>>>> 9e9ddbeb9000382b18ab542741d9eb30a0b5d5b9
 import dao
 from bookstore import (
     app,
@@ -19,10 +23,21 @@ import cloudinary.uploader
 from flask_login import UserMixin
 from sqlalchemy.orm import relationship
 
+<<<<<<< HEAD
 
 @app.route("/")
 def home():
     return render_template("index.html")
+=======
+@app.route('/')
+def index():
+    q = request.args.get("q")
+    cate_id = request.args.get("ma_the_loai")
+    page = request.args.get("page")
+    sach = dao.load_sach(q=q, cate_id=cate_id, page=page)
+    total = dao.count_sach()
+    return render_template('index.html', sach=sach, pages=math.ceil(total/app.config['PAGE_SIZE']))
+>>>>>>> 9e9ddbeb9000382b18ab542741d9eb30a0b5d5b9
 
 
 @login.user_loader
@@ -157,6 +172,14 @@ def register_process():
 def logout_my_user():
     logout_user()
     return redirect("/login")
+
+
+@app.route('/sach/<int:id>')
+def details(id):
+    sach = dao.load_sach_by_id(id)
+    return render_template('product-details.html', sach = sach)
+
+
 
 
 if __name__ == "__main__":

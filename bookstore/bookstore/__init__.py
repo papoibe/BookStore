@@ -6,8 +6,9 @@ import cloudinary
 
 app= Flask(__name__)
 app.secret_key = "%^$DSD^%^%^%^%^DSSD"
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:%s@localhost/bookstore?charset=utf8mb4" % quote('Admin@123')
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:%s@localhost/bookstoree?charset=utf8mb4" % quote('Admin@123')
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+app.config['PAGE_SIZE'] = 4
 
 db=SQLAlchemy(app)
 login = LoginManager(app)
@@ -18,4 +19,5 @@ quy_dinh_de_duoc_nhap_vao_kho=10
 
 cloudinary.config(cloud_name='dwmngambu',
                   api_key='392636472975875',
+
                   api_secret='w56y3d7LMkkD4WPbsnYcNHWB6UQ')

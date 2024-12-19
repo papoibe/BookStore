@@ -2,6 +2,7 @@
     {
         "ma_sach": 1,
         "ten_sach": "Cho Tôi Xin Một Vé Đi Tuổi Thơ",
+        "image" : "https://res.cloudinary.com/djwddqkvp/image/upload/v1733547494/10925109_fdznxz.jpg",
         "gia": 85000,
         "so_luong": 10,
         "ma_the_loai":1,
@@ -10,6 +11,7 @@
     {
         "ma_sach": 2,
         "ten_sach": "Mắt Biếc",
+        "image " : "https://res.cloudinary.com/djwddqkvp/image/upload/v1733547588/220px-_C3_81p_ph_C3_ADch_phim_M_E1_BA_AFt_bi_E1_BA_BFc_arxk18.jpg",
         "gia": 95000,
         "so_luong": 5,
         "ma_the_loai": 2,
@@ -18,6 +20,7 @@
     {
         "ma_sach": 3,
         "ten_sach": "Ngồi Khóc Trên Cây",
+        "image " : "https://res.cloudinary.com/djwddqkvp/image/upload/v1733547634/18139866_p7uulc.jpg",
         "gia": 100000,
         "so_luong": 8,
         "ma_the_loai": 2,
@@ -26,6 +29,7 @@
     {
         "ma_sach": 4,
         "ten_sach": "Kính Vạn Hoa",
+        "image" : "https://res.cloudinary.com/djwddqkvp/image/upload/v1734374434/33250372_qavoc3.jpg",
         "gia": 120000,
         "so_luong": 15,
         "ma_the_loai": 1,
@@ -34,6 +38,7 @@
     {
         "ma_sach": "5",
         "ten_sach": "Hoa Hồng Xứ Khác",
+        "image" : "https://res.cloudinary.com/djwddqkvp/image/upload/v1734374526/11358944_esf4be.jpg",
         "gia": 80000,
         "so_luong": 12,
         "ma_the_loai": 1,
@@ -42,6 +47,7 @@
     {
         "ma_sach": "6",
         "ten_sach": "Chí Phèo",
+        "image" : "",
         "gia": 60000,
         "so_luong": 20,
         "ma_the_loai": 1,
@@ -50,6 +56,7 @@
     {
         "ma_sach": "7",
         "ten_sach": "Lão Hạc",
+        "image" : "https://res.cloudinary.com/djwddqkvp/image/upload/v1734374579/9175777_rtsgko.jpg",
         "gia": 50000,
         "so_luong": 15,
         "ma_the_loai": 1,
@@ -58,6 +65,7 @@
     {
         "ma_sach": "8",
         "ten_sach": "Đời Thừa",
+        "image" : "https://res.cloudinary.com/djwddqkvp/image/upload/v1734374614/31340073_hick5w.jpg",
         "gia": 70000,
         "so_luong": 10,
         "ma_the_loai": 1,
@@ -66,6 +74,7 @@
     {
         "ma_sach": "9",
         "ten_sach": "Sống Mòn",
+        "image" : "https://res.cloudinary.com/djwddqkvp/image/upload/v1734374659/12405088_j7tzus.png",
         "gia": 80000,
         "so_luong": 8,
         "ma_the_loai": 2,
@@ -74,6 +83,7 @@
     {
         "ma_sach": "10",
         "ten_sach": "Trẻ Con Không Được Ăn Thị Chó",
+        "image" : "https://res.cloudinary.com/djwddqkvp/image/upload/v1734374722/1037_iq2jws.jpg",
         "gia": 55000,
         "so_luong": 12,
         "ma_the_loai": 1,
@@ -82,6 +92,7 @@
     {
         "ma_sach": "11",
         "ten_sach": "Cánh Đồng Bất Tận",
+        "image" : "https://res.cloudinary.com/djwddqkvp/image/upload/v1734374810/7003187_fw9vrd.jpg",
         "gia": 95000,
         "so_luong": 18,
         "ma_the_loai": 2,
@@ -90,6 +101,7 @@
     {
         "ma_sach": "12",
         "ten_sach": "Những Đoá Hoa Vô Thường",
+        "image" : "https://res.cloudinary.com/djwddqkvp/image/upload/v1734374810/7003187_fw9vrd.jpg",
         "gia": 80000,
         "so_luong": 12,
         "ma_the_loai": 1,
@@ -98,6 +110,7 @@
     {
         "ma_sach": "13",
         "ten_sach": "Tập Truyện Ngắn",
+        "image" : "https://res.cloudinary.com/djwddqkvp/image/upload/v1734374978/tuyen_tap_truyen_ngan_thach_lam__thach_lam_mhljjs.jpg",
         "gia": 70000,
         "so_luong": 10,
         "ma_the_loai": 1,
@@ -106,6 +119,7 @@
     {
         "ma_sach": "14",
         "ten_sach": "Con Cái",
+        "image" : "https://res.cloudinary.com/djwddqkvp/image/upload/v1734375064/nuoi-con-bang-chanh-niem-3_ekwc8k.jpg",
         "gia": 85000,
         "so_luong": 14,
         "ma_the_loai": 2,
@@ -114,41 +128,10 @@
     {
         "ma_sach": "15",
         "ten_sach": "Vòng Xoay",
+        "image" : "https://res.cloudinary.com/djwddqkvp/image/upload/v1734375106/Vong-Xoay-Cuoc-Doi-Paperback-9798669132248_7c49bd2f-07c6-46da-865e-02b90ddcfff5.d8acf9e8991885504ea09b33ea0d62f7_s06fmd.jpg",
         "gia": 90000,
         "so_luong": 8,
         "ma_the_loai": 2,
         "ma_tac_gia":3
-    },
-    {
-        "ma_sach": "16",
-        "ten_sach": "Thơ Mới",
-        "gia": 60000,
-        "so_luong": 20,
-        "ma_the_loai": 3,
-        "ma_tac_gia":4
-    },
-    {
-        "ma_sach": "17",
-        "ten_sach": "Vội Vàng",
-        "gia": 45000,
-        "so_luong": 18,
-        "ma_the_loai": 3,
-        "ma_tac_gia":4
-    },
-    {
-        "ma_sach": "18",
-        "ten_sach": "Tuyển Tập Thơ Xuân Diệu",
-        "gia": 75000,
-        "so_luong": 15,
-        "ma_the_loai": 3,
-        "ma_tac_gia":4
-    },
-    {
-        "ma_sach": "19",
-        "ten_sach": "Chân Dung Người Thơ",
-        "gia": 90000,
-        "so_luong": 10,
-        "ma_the_loai": 3,
-        "ma_tac_gia":4
     }
 ]
