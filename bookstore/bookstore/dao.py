@@ -5,7 +5,7 @@ from sqlalchemy.engine import result_tuple
 
 from models import *
 from bookstore import db
-
+from sqlalchemy import  extract,func
 
 def get_user_by_id(id):
     return User.query.get(id)
@@ -96,12 +96,7 @@ def add_chi_tiet_hoa_don(id, ma_sach, so_luong, gia):
     db.session.commit()
 
 def load_sach_by_id(id):
-<<<<<<< HEAD
-    with open('data/products.json', encoding='utf-8') as f:
-        sach = json.load(f)
-        for p in sach:
-            if p["id"] == id:
-                return p
+    return Sach.query.get_or_404(id)
 
 
 def stats_sach():
@@ -186,11 +181,7 @@ def revenue_stats_onl(month,year):
     )
 
     return data.all()
-
-
-=======
     return Sach.query.get(id)
->>>>>>> b64fcd4cc00ea9ce32405b5947b5d61c82d156a0
 
 def load_categories():
     return TheLoai.query.all()
