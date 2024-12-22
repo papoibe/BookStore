@@ -1,0 +1,205 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<div class="row">
+
+    <!-- Phần bảng thống kê tại cửa hàng -->
+  <div class="col-md-6 col-12">
+    <div class="card shadow-sm" style="border-radius: 15px; background-color: #f8f9fa;">
+      <div class="card-header" style="background-color: #28a745; color: #fff;">
+        <h5 class="mb-0">Doanh thu bán sách tại cửa hàng</h5>
+      </div>
+      <div class="card-body">
+        <table class="table table-hover" style="border-radius: 10px;">
+          <thead class="table-success">
+            <tr>
+              <th>Tên thể loại</th>
+              <th>Doanh thu</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in stats %}
+            <tr>
+              <td>{{ s[0] }}</td>
+              <td>
+                {% if s[1] %}
+                {{ "{:,.1f}".format(s[1]) }} VND
+                {% else %}
+                0 VND
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+     <!-- Phần biểu đồ và form lọc -->
+  <div class="col-md-6 col-12 chart-container">
+    <div class="card shadow-sm" style="border-radius: 15px; background-color: #f8f9fa;">
+      <div class="card-header" style="background-color: #28a745; color: #fff;">
+        <h5 class="mb-0">Biểu đồ thống kê</h5>
+      </div>
+      <div class="card-body">
+        <!-- Form lọc -->
+        <form method="get">
+          <div class="form-group mb-3">
+            <label for="month">Chọn tháng:</label>
+            <input type="month" id="month" class="form-control" name="month" value="{{ selected_month }}">
+          </div>
+          <input type="hidden" name="month_onl" value="{{ selected_month_onl }}">
+          <div class="d-flex justify-content-between">
+            <button type="submit" name="action" value="stats" class="btn btn-info">Thống kê</button>
+            <button type="submit" name="action" value="export" class="btn btn-success">Xuất báo cáo</button>
+          </div>
+        </form>
+        <!-- Biểu đồ -->
+        <canvas id="myBarChart" class="mt-4"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phần bảng thống kê online -->
+  <div class="col-md-6 col-12">
+    <div class="card shadow-sm" style="border-radius: 15px; background-color: #f8f9fa;">
+      <div class="card-header" style="background-color: #28a745; color: #fff;">
+        <h5 class="mb-0">Doanh thu online</h5>
+      </div>
+      <div class="card-body">
+        <table class="table table-hover" style="border-radius: 10px;">
+          <thead class="table-success">
+            <tr>
+              <th>Tên thể loại</th>
+              <th>Doanh thu</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in stats_onl %}
+            <tr>
+              <td>{{ s[0] }}</td>
+              <td>
+                {% if s[1] %}
+                {{ "{:,.1f}".format(s[1]) }} VND
+                {% else %}
+                0 VND
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- Phần biểu đồ và form lọc online -->
+  <div class="col-md-6 col-12 chart-container">
+    <div class="card shadow-sm" style="border-radius: 15px; background-color: #f8f9fa;">
+      <div class="card-header" style="background-color: #28a745; color: #fff;">
+        <h5 class="mb-0">Biểu đồ thống kê</h5>
+      </div>
+      <div class="card-body">
+        <!-- Form lọc -->
+        <form method="get">
+          <div class="form-group mb-3">
+            <label for="month_onl">Chọn tháng:</label>
+            <input type="month" id="month_onl" class="form-control" name="month_onl" value="{{ selected_month_onl }}">
+          </div>
+          <input type="hidden" name="month" value="{{ selected_month }}">
+          <div class="d-flex justify-content-between">
+            <button type="submit" name="action" value="stats_onl" class="btn btn-info">Thống kê</button>
+            <button type="submit" name="action" value="export" class="btn btn-success">Xuất báo cáo</button>
+          </div>
+        </form>
+        <!-- Biểu đồ -->
+        <canvas id="myBarChart_onl" class="mt-4"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</div>
+<script>
+  // Hàm vẽ biểu đồ chung
+  function drawBarChart(labels, data, chartId, backgroundColor, borderColor) {
+    var ctx = document.getElementById(chartId).getContext('2d');
+    var myBarChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels, // Nhãn cho mỗi cột
+        datasets: [{
+          label: 'Doanh thu',
+          data: data, // Dữ liệu cho các cột
+          backgroundColor: backgroundColor, // Màu nền mới
+          borderColor: borderColor, // Màu viền mới
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        indexAxis: 'y',
+        scales: {
+          x: {
+            beginAtZero: true // Bắt đầu từ 0 trên trục x
+          }
+        },
+        plugins: {
+          tooltip: {
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            titleColor: '#fff',
+            bodyColor: '#fff'
+          },
+          legend: {
+            position: 'top',
+          }
+        }
+      }
+    });
+  }
+
+  // Hàm vẽ biểu đồ cho thanh toán online
+  function drawBarChartOnl(labels, data) {
+    drawBarChart(
+      labels,
+      data,
+      'myBarChart_onl',
+      'rgba(255, 159, 64, 0.2)', // Màu nền cửa hàng
+      'rgba(255, 159, 64, 1)'
+    );
+  }
+
+  window.onload = function() {
+    // Dữ liệu cho biểu đồ cửa hàng
+    var labels = [];
+    var data = [];
+
+    {% for s in stats %}
+      labels.push("{{ s[0] }}");
+      data.push({{ s[1] | default(0) }});
+    {% endfor %}
+
+    // Vẽ biểu đồ cho cửa hàng
+    drawBarChart(
+      labels,
+      data,
+      'myBarChart',
+      'rgba(255, 159, 64, 0.2)', // Màu nền cửa hàng
+      'rgba(255, 159, 64, 1)'    // Màu viền cửa hàng
+    );
+
+    // Dữ liệu cho biểu đồ thanh toán online
+    var labelsOnl = [];
+    var dataOnl = [];
+
+    {% for s in stats_onl %}
+      labelsOnl.push("{{ s[0] }}");
+      dataOnl.push({{ s[1] | default(0) }});
+    {% endfor %}
+
+    // Vẽ biểu đồ cho thanh toán online
+    drawBarChartOnl(labelsOnl, dataOnl);
+  };
+</script>
+
+{% endblock %}
