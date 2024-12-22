@@ -47,7 +47,7 @@
     {
         "ma_sach": "6",
         "ten_sach": "Chí Phèo",
-        "image" : "",
+        "image" : "https://res.cloudinary.com/djwddqkvp/image/upload/v1734880195/truyen-ngan-chi-pheo-nam-cao_17a42d45c5e84fdcb8a2365d91d4e2c6_exkcaj.jpg",
         "gia": 60000,
         "so_luong": 20,
         "ma_the_loai": 1,

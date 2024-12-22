@@ -5,23 +5,19 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
-
             <ul class="navbar-nav me-auto">
                 <a class="nav-link active" href="/">Trang chủ</a>
-
-
                 <form class="d-flex">
                     <input class="form-control me-2" name="q" placeholder="Nhập từ khóa..." type="text">
                     <button class="btn btn-primary" type="submit">Tìm</button>
                 </form>
-                {% for c in categories%}
+                {% for c in categories %}
                 <li class="nav-item">
-                    <a class="nav-link" href="/?category_id={{c.id}}">{{c.name}}</a>
+                    <a class="nav-link" href="/?ma_the_loai={{c.ma_the_loai}}">{{c.ten_the_loai}}</a>
                 </li>
-                {%endfor%}
+                {% endfor %}
             </ul>
-
-            {%if current_user.is_authenticated%}
+            {% if current_user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link text-info" href="/login">
                     <img class="rounded img-fluid" src="{{current_user.avatar}}" width="25">
@@ -33,13 +29,12 @@
                     &#9940;Đăng xuất
                 </a>
             </li>
-            {%else%}
+            {% else %}
             <div class="menu d-flex">
                 <a class="nav-link text-info" href="/login">&#128100; Đăng nhập</a>
                 <a class="nav-link text-info" href="/register">&#128101; Đăng ký</a>
             </div>
-
-            {%endif%}
+            {% endif %}
         </div>
     </div>
 </nav>
