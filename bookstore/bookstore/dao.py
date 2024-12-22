@@ -197,7 +197,5 @@ def revenue_stats_onl(month,year):
 
     return data.all()
 
-if __name__=="__main__":
 
-    print(revenue_stats_onl(12,2024))
 
