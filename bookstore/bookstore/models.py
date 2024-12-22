@@ -18,11 +18,10 @@ class UserRole(RoleEnum):
     KHO = 3
     TAI_QUAY = 4
 
-
-class PhuongThucThanhToan(RoleEnum):
-    ONLINE = 1
-    TRUC_TIEP = 2
-
+class TrangThaiThanhToan(RoleEnum):
+    DA_THANH_TOAN=1
+    DA_DAT=2
+    HUY=1
 
 class TheLoai(db.Model):
     ma_the_loai = Column(Integer, primary_key=True, autoincrement=True)
@@ -30,7 +29,7 @@ class TheLoai(db.Model):
     ma_sach = relationship("Sach", backref="the_loai", lazy=True)
 
     def __str__(self):
-        return self.name
+        return str(self.ten_the_loai)
 
 
 class TacGia(db.Model):
@@ -39,7 +38,7 @@ class TacGia(db.Model):
     ma_sach = relationship("Sach", backref="tac_gia", lazy=True)
 
     def __str__(self):
-        return self.name
+        return str(self.ma_tac_gia)
 
 
 class Sach(db.Model):
@@ -55,7 +54,7 @@ class Sach(db.Model):
     chi_tiet_hoa_don = relationship("ChiTietHoaDon", backref="sach")
 
     def __str__(self):
-        return self.name
+        return str(self.ma_sach)
 
     def get_ma_sach(self):
         return self.ma_sach
@@ -88,7 +87,7 @@ class User(db.Model, UserMixin):
     don_hang = relationship("DonHang", backref="user")
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
     def get_role(self):
         return self.user_role
@@ -104,7 +103,7 @@ class PhieuNhapSach(db.Model):
     chi_tiet_phieu_nhap = relationship("ChiTietPhieuNhap", backref="phieu_nhap_sach")
 
     def __str__(self):
-        return self.name
+        return str(self.ma_phieu_nhap)
 
 
 class ChiTietPhieuNhap(db.Model):
@@ -115,18 +114,18 @@ class ChiTietPhieuNhap(db.Model):
     so_luong = Column(Integer)
 
     def __str__(self):
-        return self.name
+        return str(self.ma_phieu_nhap)
 
 
 class DonHang(db.Model):
     ma_don_hang = Column(Integer, primary_key=True, nullable=False)
     ma_khach_hang = Column(Integer, ForeignKey(User.id), nullable=False)
-    phuong_thuc_thanh_toan = Column(Enum(PhuongThucThanhToan), nullable=False)
     ngay_tao = Column(DateTime)
+    trang_thai_thanh_toan=Column(Enum(TrangThaiThanhToan),nullable=False)
     chi_tiet_don_hang = relationship("ChiTietDonHang", backref="don_hang")
 
     def __str__(self):
-        return self.name
+        return str(self.ma_khach_hang)
 
 
 class ChiTietDonHang(db.Model):
@@ -146,7 +145,7 @@ class HoaDon(db.Model):
     chi_tiet_hoa_don = relationship("ChiTietHoaDon", backref="hoa_don")
 
     def __str__(self):
-        return self.name
+        return str(self.ma_hoa_don)
 
 
 class ChiTietHoaDon(db.Model):
@@ -156,7 +155,7 @@ class ChiTietHoaDon(db.Model):
     gia = Column(Integer)
 
     def __str__(self):
-        return self.name
+        return str(self.ma_hoa_don)
 
 
 if __name__ == "__main__":
@@ -196,23 +195,5 @@ if __name__ == "__main__":
                      password=str(hashlib.md5("123".encode('utf-8')).hexdigest()),
                      name="haunguyen",
                      user_role=UserRole.ADMIN)
-
         db.session.add(u)
-        db.session.commit()
-        x = User(username="an",
-                 password=str(hashlib.md5("123".encode('utf-8')).hexdigest()),
-                 name="an",
-                 user_role=UserRole.KHO)
-
-        db.session.add(x)
-        db.session.commit()
-
-        y = User(
-            username="taiquay",
-            password=str(hashlib.md5("123".encode("utf-8")).hexdigest()),
-            name="taiquay",
-            user_role=UserRole.TAI_QUAY,
-        )
-
-        db.session.add(y)
         db.session.commit()

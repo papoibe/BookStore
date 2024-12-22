@@ -1,7 +1,10 @@
 import json
 import hashlib
 
+
 from sqlalchemy.engine import result_tuple
+from sqlalchemy import func,extract
+
 
 from models import *
 from bookstore import db
@@ -109,4 +112,92 @@ def load_sach_by_id(id):
         for p in sach:
             if p["id"] == id:
                 return p
+
+
+def stats_sach():
+    return db.session.query(TheLoai.ma_the_loai, TheLoai.ten_the_loai, func.count(Sach.ma_sach))\
+        .join(Sach, Sach.ma_the_loai.__eq__(TheLoai.ma_the_loai), isouter=True).group_by(TheLoai.ma_the_loai).all()
+
+def fre_month(month,year):
+    data = (
+        db.session.query(
+            Sach.ten_sach,
+            TheLoai.ten_the_loai,  # Giả định TheLoai có trường 'ten_the_loai'
+            func.sum(ChiTietHoaDon.so_luong).label("tong_so_luong"),
+        )
+        .join(ChiTietHoaDon, Sach.ma_sach == ChiTietHoaDon.ma_sach)
+        .join(HoaDon, ChiTietHoaDon.ma_hoa_don == HoaDon.ma_hoa_don)
+        .join(TheLoai, Sach.ma_the_loai == TheLoai.ma_the_loai)
+        .filter(
+            extract("month", HoaDon.ngay_lap) == month,
+            extract("year", HoaDon.ngay_lap) == year
+        )
+        .group_by(Sach.ten_sach, TheLoai.ten_the_loai)
+    )
+
+    return data.all()
+
+def fre_month_onl(month,year):
+    data = (
+        db.session.query(
+            Sach.ten_sach,
+            TheLoai.ten_the_loai,
+            func.sum(ChiTietDonHang.so_luong).label("tong_so_luong"),
+        )
+        .join(ChiTietDonHang, Sach.ma_sach == ChiTietDonHang.ma_sach)
+        .join(DonHang, ChiTietDonHang.ma_don_hang == DonHang.ma_don_hang)
+        .join(TheLoai, Sach.ma_the_loai == TheLoai.ma_the_loai)
+        .filter(
+            extract("month", HoaDon.ngay_lap) == month,
+            extract("year", HoaDon.ngay_lap) == year,
+            DonHang.trang_thai_thanh_toan==TrangThaiThanhToan.DA_THANH_TOAN
+
+        )
+        .group_by(Sach.ten_sach, TheLoai.ten_the_loai)
+    )
+
+    return data.all()
+
+def revenue_stats(month,year):
+    data = (
+        db.session.query(
+            TheLoai.ten_the_loai,
+            func.sum(ChiTietHoaDon.so_luong*ChiTietHoaDon.gia)
+        )
+        .join(Sach,Sach.ma_the_loai==TheLoai.ma_the_loai)
+        .join(ChiTietHoaDon, Sach.ma_sach == ChiTietHoaDon.ma_sach)
+        .join(HoaDon, ChiTietHoaDon.ma_hoa_don == HoaDon.ma_hoa_don)
+        .filter(
+            extract("month", HoaDon.ngay_lap) == month,
+            extract("year", HoaDon.ngay_lap) == year
+        )
+        .group_by(TheLoai.ma_the_loai,TheLoai.ten_the_loai)
+    )
+
+
+
+    return data.all()
+
+def revenue_stats_onl(month,year):
+    data = (
+        db.session.query(
+            TheLoai.ten_the_loai,
+            func.sum(ChiTietDonHang.so_luong * ChiTietDonHang.gia).label("tong_doanh_thu"),
+        )
+        .join(Sach, Sach.ma_sach == ChiTietDonHang.ma_sach)  # Join Sach trước
+        .join(TheLoai, Sach.ma_the_loai == TheLoai.ma_the_loai)  # Kết nối tới TheLoai
+        .join(DonHang, ChiTietDonHang.ma_don_hang == DonHang.ma_don_hang)
+        .filter(
+            extract("month", HoaDon.ngay_lap) == month,
+            extract("year", HoaDon.ngay_lap) == year,
+            DonHang.trang_thai_thanh_toan == TrangThaiThanhToan.DA_THANH_TOAN,
+        )
+        .group_by(TheLoai.ten_the_loai)  # Chỉ group_by các cột trong select
+    )
+
+    return data.all()
+
+if __name__=="__main__":
+
+    print(revenue_stats_onl(12,2024))
 

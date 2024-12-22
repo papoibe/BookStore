@@ -39,8 +39,14 @@ def load_user(user_id):
 
 @app.route("/login", methods=["get", "post"])
 def login_process():
-    # if current_user.is_authenticated:
-    #     return redirect("/")
+    if current_user.is_authenticated:
+        if current_user.get_role() == UserRole.ADMIN:
+            return redirect("/admin")
+        if current_user.get_role() == UserRole.KHO:
+            return redirect("/kho")
+        if current_user.get_role() == UserRole.TAI_QUAY:
+            return redirect("/tai_quay")
+        return redirect("/")
     if request.method.__eq__("POST"):
         username = request.form.get("username")
         password = request.form.get("password")

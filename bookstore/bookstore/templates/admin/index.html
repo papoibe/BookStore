@@ -1,0 +1,175 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<style>
+  body {
+    background-color: #ffffff; /* Nền trắng sạch sẽ */
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1 {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 2.8rem;
+    color: #34495e; /* Màu xám đậm cho tiêu đề chính */
+    font-weight: bold;
+  }
+
+  h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    color: #1abc9c; /* Màu xanh ngọc cho tiêu đề phụ */
+    margin-bottom: 20px;
+  }
+
+  .table {
+    background: #f7f9fc; /* Nền sáng mờ cho bảng */
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  th {
+    background-color: #1abc9c; /* Màu xanh ngọc tươi sáng */
+    color: white;
+    text-align: center;
+    padding: 12px;
+    font-size: 1.1rem;
+  }
+
+  td {
+    text-align: center;
+    font-size: 1rem;
+    padding: 12px;
+    border-bottom: 1px solid #ecf0f1; /* Màu viền nhạt */
+  }
+
+  .chart-container {
+    background: #f7f9fc;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .row {
+    margin: 20px auto;
+    max-width: 1200px;
+    display: flex;
+    gap: 20px;
+  }
+
+  .col-md-6 {
+    flex: 1;
+  }
+
+  /* Nút bấm */
+  button {
+    border-radius: 5px;
+    font-size: 1rem;
+    padding: 10px 20px;
+  }
+
+  .btn-info {
+    background-color: #f39c12; /* Màu vàng cam sáng cho nút */
+    border: none;
+    color: white;
+  }
+
+  .btn-info:hover {
+    background-color: #e67e22; /* Màu cam đậm khi hover */
+  }
+
+  .btn-success {
+    background-color: #3498db; /* Màu xanh dương sáng cho nút */
+    border: none;
+    color: white;
+  }
+
+  .btn-success:hover {
+    background-color: #2980b9; /* Màu xanh dương đậm khi hover */
+  }
+</style>
+
+<h1>CHÀO MỪNG ĐẾN VỚI TRANG QUẢN TRỊ!</h1>
+<h2>Chào {{ current_user.username }}.</h2>
+
+<div class="row">
+  <div class="col-md-6 col-12">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Mã thể loại</th>
+          <th>Tên thể loại</th>
+          <th>Số đầu sách</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in books %}
+        <tr>
+          <td>{{ s[0] }}</td>
+          <td>{{ s[1] }}</td>
+          <td>{{ s[2] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="col-md-6 col-12 chart-container">
+    <canvas id="myChart"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  // Hàm vẽ biểu đồ tròn
+  function drawChart(labels, data) {
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+      type: 'pie', // Biểu đồ tròn
+      data: {
+        labels: labels, // Tên thể loại
+        datasets: [{
+          label: 'Số lượng đầu sách',
+          data: data, // Dữ liệu số đầu sách
+          backgroundColor: ['#1abc9c', '#f39c12', '#3498db', '#e74c3c', '#9b59b6'], // Màu sắc đẹp mắt cho từng phân đoạn
+          borderColor: '#ffffff', // Màu viền trắng cho các phân đoạn
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          tooltip: {
+            backgroundColor: 'rgba(0, 0, 0, 0.7)', // Màu nền của tooltip
+            titleColor: '#fff',
+            bodyColor: '#fff'
+          },
+          legend: {
+            position: 'top', // Đặt legend ở trên
+          }
+        }
+      }
+    });
+  }
+
+  // Lấy dữ liệu từ bảng và vẽ biểu đồ
+  window.onload = function() {
+    var labels = [];
+    var data = [];
+
+    // Lấy dữ liệu từ bảng
+    {% for s in books %}
+      labels.push("{{ s[1] }}"); // Tên thể loại
+      data.push({{ s[2] | default(0) }}); // Số lượng đầu sách, nếu không có thì là 0
+    {% endfor %}
+
+    // Vẽ biểu đồ
+    drawChart(labels, data);
+  };
+</script>
+
+{% endblock %}
