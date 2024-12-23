@@ -1,7 +1,7 @@
 {% extends 'layout/base.html' %}
 
 {% block header %}
-    <nav class="navbar navbar-expand-sm" style="background-color: #F2F9FF; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+<nav class="navbar navbar-expand-sm" style="background-color: #F2F9FF; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
     <a class="navbar-brand d-flex align-items-center" href="#">
         <img src="static/images/logo.jpg" class="brand-logo">
         <span class="brand-text ms-2">Nhà Sách Hoàng Tử Bé</span>
@@ -24,8 +24,13 @@
         </ul>
 
         <li class="navbar-nav">
-            <a class="nav-link text-success" href="/">Giỏ hàng
-            <span class="badge badge-info" id="cartCounter" style="color: orange">0</span>
+            <a class="nav-link text-success" href="/">Lịch sử đặt hàng</a>
+        </li>
+
+        <li class="navbar-nav">
+            <a class="nav-link text-success" href="{{ url_for('cart') }}">Giỏ hàng
+                <span class="badge badge-info" id="cartCounter"
+                      style="color: orange">{{ cart_stats.total_quantity }}</span>
             </a>
         </li>
 
@@ -51,24 +56,27 @@
     </div>
 </nav>
 {% endblock %}
-
-{% block title %} Chi tiết sản phẩm {% endblock %}
-
 {% block content %}
-<div class="row">
-    <div class="col-md-5 col-12">
-        <img src="{{ sach.image }}" class="img-fluid rounded" />
-    </div>
-    <div class="col-md-7 col-12">
-        <h1 class="text-info">{{ sach.ten_sach }}</h1>
-        <h3 class="text-danger">{{ "{:,.0f}".format(sach.gia) }} VND</h3>
-        <p class="text-muted">Số lượng: {{ sach.so_luong }}</p>
 
-        <div class="mt-3">
-            <a href="#" class="btn btn-primary">Đặt hàng</a>
-            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">Quay lại</a>
+<br>
+<h1 class="text-center text-danger">LỊCH SỬ ĐẶT HÀNG</h1>
 
-        </div>
-    </div>
-</div>
+<table class="table">
+    <tr>
+        <th>Mã đơn hàng</th>
+        <th>Ngày đặt hàng</th>
+        <th>Trạng thái đơn hàng</th>
+    </tr>
+
+
+    {% for c in history %}
+    <tr>
+        <td>{{ c.[0] }}</td>
+        <td>{{ c.[1] }}</td>
+        <td>{{ c.[2] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+
 {% endblock %}

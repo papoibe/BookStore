@@ -1,3 +1,4 @@
+import datetime
 import json
 import hashlib
 
@@ -11,6 +12,12 @@ from sqlalchemy import  extract,func
 
 def get_user_by_id(id):
     return User.query.get(id)
+
+def get_config_by_role(role):
+    return db.session.query(ConFig).filter(ConFig.name==role).first()
+
+def get_config_by_id(id):
+    return ConFig.query.get(id)
 
 # đang tạo load sach cho index sach
 def load_sach(q=None, cate_id=None, page=None):
@@ -161,8 +168,6 @@ def revenue_stats(month,year):
         .group_by(TheLoai.ma_the_loai,TheLoai.ten_the_loai)
     )
 
-
-
     return data.all()
 
 def revenue_stats_onl(month,year):
@@ -183,7 +188,56 @@ def revenue_stats_onl(month,year):
     )
 
     return data.all()
-    return Sach.query.get(id)
 
 def load_categories():
     return TheLoai.query.all()
+
+def config():
+    data = db.session.query(ConFig.id, ConFig.name, ConFig.value).all()
+
+    # Chuyển đổi enum thành chuỗi tên và tạo tuple mới
+    formatted_data = [(id, role.name, value) for id, role, value in data]
+
+    return formatted_data
+
+def count_cart(cart):
+    total_quantity, total_amount = 0, 0
+
+    if cart:
+        for c in cart.values():
+            total_quantity += c['quantity']
+            total_amount += c['quantity'] * c['price']
+
+    return {
+        'total_quantity': total_quantity,
+        'total_amount': total_amount
+    }
+
+def add_receipt(cart, status):
+    if not cart:
+        raise ValueError("Giỏ hàng trống.")
+
+    if cart:
+        receipt = DonHang(
+            ma_khach_hang = current_user.id,
+            ngay_tao = datetime.now(),
+            trang_thai_thanh_toan=status
+        )
+        db.session.add(receipt)
+        db.session.flush()  # Đẩy dữ liệu tạm để lấy ma_don_hang
+
+        for c in cart.values():
+            d = ChiTietDonHang(
+                ma_don_hang=receipt.ma_don_hang,
+                ma_sach=c['id'],
+                so_luong=c['quantity'],
+                gia=c['price']
+            )
+        db.session.add(d)
+    db.session.commit()
+
+
+if __name__=='__main__':
+    print(get_history_by_id_user(4))
+
+

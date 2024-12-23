@@ -142,3 +142,36 @@ footer .footer-text p {
     transition: all 0.3s ease;    /* Hiệu ứng mượt khi hover */
 }
 
+
+/* Logo và văn bản */
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Căn chỉnh logo */
+.brand-logo {
+    height: 30px; /* Kích thước nhỏ hơn */
+    border-radius: 5px; /* Góc bo tròn */
+    transition: transform 0.3s ease; /* Hiệu ứng hover */
+}
+
+/* Văn bản bên cạnh logo */
+.brand-text {
+    font-family: 'Arial', sans-serif;
+    font-size: 1.2rem; /* Kích thước chữ */
+    color: #555; /* Màu chữ */
+    margin-left: 10px; /* Khoảng cách giữa logo và chữ */
+}
+
+/* Hover logo và chữ */
+.navbar-brand:hover .brand-logo {
+    transform: scale(1.1); /* Logo phóng to khi hover */
+}
+
+.navbar-brand:hover .brand-text {
+    color: gray; /* Màu chữ thay đổi khi hover */
+}
