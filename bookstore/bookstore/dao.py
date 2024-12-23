@@ -12,6 +12,12 @@ from sqlalchemy import  extract,func
 def get_user_by_id(id):
     return User.query.get(id)
 
+def get_config_by_role(role):
+    return db.session.query(ConFig).filter(ConFig.name==role).first()
+
+def get_config_by_id(id):
+    return ConFig.query.get(id)
+
 # đang tạo load sach cho index sach
 def load_sach(q=None, cate_id=None, page=None):
 
@@ -161,8 +167,6 @@ def revenue_stats(month,year):
         .group_by(TheLoai.ma_the_loai,TheLoai.ten_the_loai)
     )
 
-
-
     return data.all()
 
 def revenue_stats_onl(month,year):
@@ -187,3 +191,15 @@ def revenue_stats_onl(month,year):
 
 def load_categories():
     return TheLoai.query.all()
+
+def config():
+    data = db.session.query(ConFig.id, ConFig.name, ConFig.value).all()
+
+    # Chuyển đổi enum thành chuỗi tên và tạo tuple mới
+    formatted_data = [(id, role.name, value) for id, role, value in data]
+
+    return formatted_data
+if __name__=='__main__':
+    print(config())
+
+

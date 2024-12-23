@@ -10,12 +10,10 @@ import dao
 from bookstore import (
     app,
     admin,
-    login,
-    so_luong_nhap_vao_kho_it_nhat,
-    quy_dinh_de_duoc_nhap_vao_kho,
+    login
 )
 from flask_login import login_user, logout_user, current_user
-from models import UserRole
+from models import UserRole,ConFigRole
 import cloudinary.uploader
 from flask_login import UserMixin
 from sqlalchemy.orm import relationship
@@ -86,13 +84,14 @@ def kho():
         for i in range(len(ma_sach)):
             sach = dao.get_sach_by_id(ma_sach[i])
 
-            if int(so_luong[i]) < so_luong_nhap_vao_kho_it_nhat:
+            if int(so_luong[i]) < dao.get_config_by_role(ConFigRole.NHAP_TOI_THIEU).value:
                 flag = False
-                err_msg = f"Mã:{sach.ma_sach}- {sach.ten_sach} nhập chưa đạt lượng sách tối thiểu ({so_luong_nhap_vao_kho_it_nhat})."
+                err_msg = (f"Mã:{sach.ma_sach}- {sach.ten_sach} nhập chưa đạt lượng sách tối thiểu"
+                           f" ({dao.get_config_by_role(ConFigRole.NHAP_TOI_THIEU).value}).")
                 return render_template(
                     "kho.html", err_msg=err_msg, success_msg=success_msg
                 )
-            if sach.get_so_luong() > quy_dinh_de_duoc_nhap_vao_kho:
+            if sach.get_so_luong() > dao.get_config_by_role(ConFigRole.NHAP_KHI_SO_LUONG_CON_IT_NHAT).value:
                 flag = False
                 err_msg = f"Mã:{sach.ma_sach}- {sach.ten_sach} chưa cần nhập"
                 return render_template(
@@ -146,7 +145,6 @@ def get_sach_info():
         )
     return jsonify({"success": False, "message": "Không tìm thấy sách"}), 404
 
-
 @app.route("/register", methods=["get", "post"])
 def register_process():
     err_msg = ""
@@ -167,7 +165,6 @@ def register_process():
 
     return render_template("register.html", err_msg=err_msg)
 
-
 @app.route("/logout")
 def logout_my_user():
     logout_user()
@@ -186,3 +183,4 @@ def details(id):
 if __name__ == "__main__":
     with app.app_context():
         app.run(debug=True)
+

@@ -54,7 +54,6 @@ class LogoutView(MyView):
         logout_user()
         return redirect('/login')
 
-
 class FrequencyView(MyView):
     @expose("/")
     def index(self):
@@ -121,10 +120,25 @@ class RevenueView(MyView):
             selected_month_onl=selected_month_onl
         )
 
+class ConFigView(MyView):
+    @expose("/",methods=["get", "post"])
+    def index(self):
+        if request.method == "POST":
+            ids =request.form.getlist("id[]")
+            so_luong = request.form.getlist("quantity[]")
+            for i, id in enumerate(ids):
+                new_quantity = so_luong[i]
+                dao.get_config_by_id(id).update_value(int(new_quantity))
+            return  self.render('admin/config.html',configs=dao.config())
+        return self.render('admin/config.html',configs=dao.config())
+
+
+
 admin.add_view(UserView(User,db.session))
 admin.add_view(SachView(Sach,db.session))
 admin.add_view(TheLoaiView(TheLoai, db.session))
 admin.add_view(TacGiaView(TacGia,db.session))
 admin.add_view(FrequencyView(name='Tần suất bán'))
 admin.add_view(RevenueView(name='Doanh thu'))
+admin.add_view(ConFigView(name='Quy định'))
 admin.add_view(LogoutView(name='Đăng xuất'))
