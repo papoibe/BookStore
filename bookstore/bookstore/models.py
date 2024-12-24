@@ -6,7 +6,7 @@ from sqlalchemy import (
     Enum,
     DateTime,
 )
-#Update
+
 
 from sqlalchemy.orm import relationship
 from bookstore import app, db

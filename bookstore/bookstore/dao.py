@@ -3,7 +3,7 @@ import hashlib
 import pandas as pd
 from sqlalchemy.engine import result_tuple
 
-#Update
+
 from flask import make_response
 from models import *
 from bookstore import db
@@ -209,7 +209,8 @@ def export_csv(data, filename,type):
             df = pd.DataFrame(data, columns=["Tên thể loại","Doanh thu"])
         if type=="kho":
             df= pd.DataFrame(data, columns=["Mã sách","Tên sách", "Số lượng"])
-
+        if type=="tai_quay":
+            df = pd.DataFrame(data, columns=["Mã sách", "Tên sách", "Số lượng","Giá","Thành tiền"])
         # Chuyển DataFrame thành CSV với BOM
         csv_data = df.to_csv(index=False, encoding="utf-8-sig")
 

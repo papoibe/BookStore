@@ -8,7 +8,6 @@ from flask import redirect,request
 import hashlib
 from  sqlalchemy import func
 
-#Update
 class MyAdminIndexView(AdminIndexView):
     @expose("/")
     def index(self):

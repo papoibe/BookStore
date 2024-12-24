@@ -77,6 +77,14 @@ def kho():
         so_luong = request.form.getlist("quantity[]")
         ten_sach=request.form.getlist("book_name[]")
         date = request.form.get("date")
+
+        action = request.form.get("action")  # Lấy giá trị action từ form
+
+        # Nếu action là "export", thực hiện xuất CSV
+        if action == "export":
+            data = list(zip(ma_sach, ten_sach, so_luong))
+            return dao.export_csv(data, f"bao_cao_{date}.csv", type="kho")
+
         ## Kiểm tra hợp lệ trước khi nhập
         if not date:
             err_msg = "Chưa nhập ngày"
@@ -121,13 +129,14 @@ def kho():
             )
             for i in range(len(ma_sach)):
                 dao.add_chi_tiet_phieu_nhap(int(id), ma_sach[i], int(so_luong[i]))
-        success_msg = "Nhập phiếu thành công!"
-        return render_template("kho.html",
+            success_msg = "Nhập phiếu thành công!"
+            return render_template("kho.html",
                         err_msg=err_msg, success_msg=success_msg,
                            ma_sach=ma_sach,
                            so_luong=so_luong,
                            ten_sach=ten_sach,
                            date=date)
+
     return render_template("kho.html",
                         err_msg=err_msg, success_msg=success_msg,
                            ma_sach=ma_sach,
@@ -156,6 +165,12 @@ def tai_quay():
         thanh_tien= request.form.getlist("total[]")
         totalQuantity=request.form.get("totalQuantity")
         totalAmount=request.form.get("totalAmount")
+
+        action = request.form.get("action")
+        if action == "export":
+            data = list(zip(ma_sach, ten_sach, so_luong,gia,thanh_tien))
+            return dao.export_csv(data, f"phieu_thanh_toan_{date}.csv", type="tai_quay")
+
         if not date:
             err_msg = "Chưa nhập ngày"
             return render_template(
