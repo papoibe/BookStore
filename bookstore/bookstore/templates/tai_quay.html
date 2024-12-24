@@ -1,10 +1,191 @@
 {%extends 'layout/base.html'%}
 
 {%block content%}
+<style>
+    .invoice-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h2 {
+    color: #2196F3;
+    margin-bottom: 25px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* Date Input Styles */
+.date-input {
+    margin-bottom: 20px;
+}
+
+.date-input label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: 500;
+}
+
+.date-input input[type="date"] {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Table Styles */
+#invoiceTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+#invoiceTable th {
+    background-color: #F2F9FF;
+    color: #333;
+    font-weight: 600;
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+#invoiceTable td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+#invoiceTable input {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+#invoiceTable input[readonly] {
+    background-color: #f5f5f5;
+}
+
+/* Button Styles */
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.btn-primary {
+    background-color: #2196F3;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.deleteBtn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#addRow {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+/* Summary Section */
+#summary {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #F2F9FF;
+    border-radius: 4px;
+}
+
+#summary p {
+    margin: 8px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+#summary span {
+    font-weight: 600;
+    color: #2196F3;
+}
+
+/* Alert Messages */
+.alert {
+    padding: 12px;
+    margin: 15px 0;
+    border-radius: 4px;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+/* Bottom Buttons Section */
+.bottom-buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.bottom-buttons button {
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.bottom-buttons button[type="submit"] {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+}
+
+.bottom-buttons button[value="export"] {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+}
+
+</style>
+
 <h2>Lập Hóa Đơn</h2>
 <form method="POST" action="/tai_quay">
+
+<div class="date-input">
     <label for="date">Ngày lập hóa đơn:</label>
-    <input type="date" id="date" name="date">
+    <input type="date" id="date" name="date" value="{{ date }}">
+</div>
 
     <table id="invoiceTable">
         <thead>
@@ -17,24 +198,53 @@
             </tr>
         </thead>
         <tbody>
+        {% if ma_sach %}
+            {% for i in range(ma_sach|length) %}
             <tr>
-                <td><input type="text" name="book[]" placeholder="Mã sách"oninput="fetchBookInfo(this)"></td>
-                <td><input type="text" name="book_name[]" placeholder="Tên sách"></td>
-                <td><input type="number" name="price[]"  placeholder="Đơn giá"></td>
-                <td><input type="number" name="quantity[]" min="1" placeholder="Số lượng"></td>
-                <td><input type="number" name="total[]" readonly placeholder="Thành tiền"></td>
+                <td><input type="text" name="book[]" value="{{ ma_sach[i] }}" placeholder="Mã sách" oninput="fetchBookInfo(this)"></td>
+                <td><input type="text" name="book_name[]" value="{{ ten_sach[i] }}" placeholder="Tên sách"></td>
+                <td><input type="number" name="price[]" value="{{ gia[i] }}" placeholder="Đơn giá"></td>
+                <td><input type="number" name="quantity[]" value="{{ so_luong[i] }}" min="1" placeholder="Số lượng"></td>
+                <td><input type="number" name="total[]" value="{{ thanh_tien[i] }}" readonly placeholder="Thành tiền"></td>
                 <td><button type="button" class="deleteBtn">Xóa</button></td>
             </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td><input type="text" name="book[]" placeholder="Mã sách" oninput="fetchBookInfo(this)"></td>
+                <td><input type="text" name="book_name[]" placeholder="Tên sách"></td>
+                <td><input type="number" name="price[]" placeholder="Đơn giá"></td>
+                <td><input type="number" name="quantity[]" min="1" placeholder="Số lượng"></td>
+                <td><input type="number" name="total[]" readonly placeholder="Thành tiền"></td>
+                <td><button type="button" class="btn btn-danger deleteBtn">Xóa</button></td>
+            </tr>
+        {% endif %}
         </tbody>
     </table>
 
     <div class="add-button">
-        <button type="button" id="addRow">Thêm</button>
+       <button type="button" class="btn btn-success" id="addRow">Thêm</button>
     </div>
 
+    <input type="hidden" name="totalQuantity" id="totalQuantityInput">
+    <input type="hidden" name="totalAmount" id="totalAmountInput">
     <div id="summary">
-        <p>Tổng số lượng: <span id="totalQuantity">0</span></p>
-        <p>Tổng tiền: <span id="totalAmount">0</span> VNĐ</p>
+            <p>Tổng số lượng: <span id="totalQuantity" name="totalQuantity">
+                {% if ma_sach %}
+                    {{ totalQuantity }}
+                {% else %}
+                    0
+                {% endif %}
+            </span></p>
+
+            <p>Tổng tiền: <span id="totalAmount" name="totalAmount">
+                {% if ma_sach %}
+                    {{ totalAmount }}
+                {% else %}
+                    0
+                {% endif %}
+            </span> VNĐ</p>
+
     </div>
 
     {% if err_msg %}
@@ -51,7 +261,7 @@
 
     <div class="bottom-buttons">
         <button type="submit">Lập hóa đơn</button>
-        <button type="button" onclick="window.print()">In hóa đơn</button>
+        <button type="submit" name="action" value="export">In hóa đơn</button>
     </div>
 </form>
 
@@ -112,6 +322,9 @@
 
         document.getElementById('totalQuantity').textContent = totalQuantity;
         document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
+
+        document.getElementById('totalQuantityInput').value = totalQuantity;
+        document.getElementById('totalAmountInput').value = totalAmount.toFixed(2);
     }
 </script>
 

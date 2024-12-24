@@ -1,11 +1,10 @@
-import datetime
 import json
 import hashlib
-
+import pandas as pd
 from sqlalchemy.engine import result_tuple
 
-#Update
 
+from flask import make_response
 from models import *
 from bookstore import db
 from sqlalchemy import  extract,func
@@ -188,6 +187,7 @@ def revenue_stats_onl(month,year):
     )
 
     return data.all()
+    return Sach.query.get(id)
 
 def load_categories():
     return TheLoai.query.all()
@@ -200,44 +200,27 @@ def config():
 
     return formatted_data
 
-def count_cart(cart):
-    total_quantity, total_amount = 0, 0
+# Xuất báo cáo
+def export_csv(data, filename,type):
+        # Chuyển dữ liệu thành DataFrame
+        if type=="fre":
+            df = pd.DataFrame(data, columns=["Tên sách", "Tên thể loại", "Số lượng"])
+        if type=="revenue":
+            df = pd.DataFrame(data, columns=["Tên thể loại","Doanh thu"])
+        if type=="kho":
+            df= pd.DataFrame(data, columns=["Mã sách","Tên sách", "Số lượng"])
+        if type=="tai_quay":
+            df = pd.DataFrame(data, columns=["Mã sách", "Tên sách", "Số lượng","Giá","Thành tiền"])
+        # Chuyển DataFrame thành CSV với BOM
+        csv_data = df.to_csv(index=False, encoding="utf-8-sig")
 
-    if cart:
-        for c in cart.values():
-            total_quantity += c['quantity']
-            total_amount += c['quantity'] * c['price']
-
-    return {
-        'total_quantity': total_quantity,
-        'total_amount': total_amount
-    }
-
-def add_receipt(cart, status):
-    if not cart:
-        raise ValueError("Giỏ hàng trống.")
-
-    if cart:
-        receipt = DonHang(
-            ma_khach_hang = current_user.id,
-            ngay_tao = datetime.now(),
-            trang_thai_thanh_toan=status
-        )
-        db.session.add(receipt)
-        db.session.flush()  # Đẩy dữ liệu tạm để lấy ma_don_hang
-
-        for c in cart.values():
-            d = ChiTietDonHang(
-                ma_don_hang=receipt.ma_don_hang,
-                ma_sach=c['id'],
-                so_luong=c['quantity'],
-                gia=c['price']
-            )
-        db.session.add(d)
-    db.session.commit()
-
+        # Tạo response để tải file
+        response = make_response(csv_data)
+        response.headers["Content-Disposition"] = f"attachment; filename={filename}"
+        response.headers["Content-Type"] = "text/csv; charset=utf-8"
+        return response
 
 if __name__=='__main__':
-    print(get_history_by_id_user(4))
+    print(config())
 
 
