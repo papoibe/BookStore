@@ -69,15 +69,24 @@ def login_process():
 def kho():
     err_msg = ""
     success_msg = ""
+    ma_sach=[]
+    so_luong=[]
+    ten_sach=[]
+    date=""
     if request.method == "POST":
         ma_sach = request.form.getlist("book[]")
         so_luong = request.form.getlist("quantity[]")
+        ten_sach=request.form.getlist("book_name[]")
         date = request.form.get("date")
         ## Kiểm tra hợp lệ trước khi nhập
         if not date:
             err_msg = "Chưa nhập ngày"
             return render_template(
-                "kho.html", err_msg=err_msg, success_msg=success_msg
+                "kho.html", err_msg=err_msg, success_msg=success_msg,
+                ma_sach=ma_sach,
+                so_luong=so_luong,
+                ten_sach=ten_sach,
+                date=date
             )
         flag = True
 
@@ -89,14 +98,23 @@ def kho():
                 err_msg = (f"Mã:{sach.ma_sach}- {sach.ten_sach} nhập chưa đạt lượng sách tối thiểu"
                            f" ({dao.get_config_by_role(ConFigRole.NHAP_TOI_THIEU).value}).")
                 return render_template(
-                    "kho.html", err_msg=err_msg, success_msg=success_msg
+                    "kho.html", err_msg=err_msg, success_msg=success_msg,
+                    ma_sach=ma_sach,
+                    so_luong=so_luong,
+                    ten_sach=ten_sach,
+                    date=date
                 )
             if sach.get_so_luong() > dao.get_config_by_role(ConFigRole.NHAP_KHI_SO_LUONG_CON_IT_NHAT).value:
                 flag = False
                 err_msg = f"Mã:{sach.ma_sach}- {sach.ten_sach} chưa cần nhập"
                 return render_template(
-                    "kho.html", err_msg=err_msg, success_msg=success_msg
+                    "kho.html", err_msg=err_msg, success_msg=success_msg,
+                    ma_sach=ma_sach,
+                    so_luong=so_luong,
+                    ten_sach=ten_sach,
+                    date=date
                 )
+
         # Nhập sách
         if flag == True:
             id = dao.add_phieu_nhap_sach(
@@ -105,22 +123,53 @@ def kho():
             for i in range(len(ma_sach)):
                 dao.add_chi_tiet_phieu_nhap(int(id), ma_sach[i], int(so_luong[i]))
         success_msg = "Nhập phiếu thành công!"
-    return render_template("kho.html", err_msg=err_msg, success_msg=success_msg)
-
+        return render_template("kho.html",
+                        err_msg=err_msg, success_msg=success_msg,
+                           ma_sach=ma_sach,
+                           so_luong=so_luong,
+                           ten_sach=ten_sach,
+                           date=date)
+    return render_template("kho.html",
+                        err_msg=err_msg, success_msg=success_msg,
+                           ma_sach=ma_sach,
+                           so_luong=so_luong,
+                           ten_sach=ten_sach,
+                           date=date)
 
 @app.route("/tai_quay", methods=["get", "post"])
 def tai_quay():
     err_msg = ""
     success_msg = ""
+    ma_sach=[]
+    ten_sach=[]
+    so_luong=[]
+    gia=[]
+    thanh_tien=[]
+    date=""
+    totalQuantity=0
+    totalAmount=0
     if request.method == "POST":
         date = request.form.get("date")
         ma_sach = request.form.getlist("book[]")
+        ten_sach = request.form.getlist("book_name[]")
         so_luong = request.form.getlist("quantity[]")
         gia = request.form.getlist("price[]")
+        thanh_tien= request.form.getlist("total[]")
+        totalQuantity=request.form.get("totalQuantity")
+        totalAmount=request.form.get("totalAmount")
         if not date:
             err_msg = "Chưa nhập ngày"
             return render_template(
-                "tai_quay.html", err_msg=err_msg, success_msg=success_msg
+                "tai_quay.html",
+                err_msg=err_msg, success_msg=success_msg,
+                ma_sach=ma_sach,
+                so_luong=so_luong,
+                ten_sach=ten_sach,
+                gia=gia,
+                thanh_tien=thanh_tien,
+                date=date,
+                totalQuantity=totalQuantity,
+                totalAmount=totalAmount
             )
 
         id = dao.add_hoa_don(current_user.get_id(), date)
@@ -128,9 +177,21 @@ def tai_quay():
             dao.add_chi_tiet_hoa_don(
                 int(id), int(ma_sach[i]), int(so_luong[i]), int(gia[i])
             )
+            dao.get_sach_by_id(ma_sach[i]).thanh_toan(int(so_luong[i]))
         success_msg = "Nhập phiếu thành công!"
-
-    return render_template("tai_quay.html", err_msg=err_msg, success_msg=success_msg)
+        print(totalQuantity)
+        print(totalAmount)
+    return render_template("tai_quay.html",
+                           err_msg=err_msg, success_msg=success_msg,
+                           ma_sach=ma_sach,
+                           so_luong=so_luong,
+                           ten_sach=ten_sach,
+                           gia=gia,
+                           thanh_tien=thanh_tien,
+                           date=date,
+                           totalQuantity=totalQuantity,
+                           totalAmount=totalAmount
+                           )
 
 
 @app.route("/api/sach", methods=["POST"])

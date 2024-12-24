@@ -59,7 +59,7 @@ class FrequencyView(MyView):
     def index(self):
         selected_month = request.args.get("month")
         selected_month_onl = request.args.get("month_onl")
-
+        action=request.args.get("action")
         # xử lý giá trị
         if selected_month == "None":
             selected_month = None
@@ -80,10 +80,17 @@ class FrequencyView(MyView):
         if selected_month_onl:
             year_onl, month_value_onl = map(int, selected_month_onl.split('-'))
 
+        stats = dao.fre_month(month=month_value, year=year)
+        stats_onl = dao.fre_month_onl(month=month_value_onl, year=year_onl)
+        if action == "export":
+            return dao.export_csv(stats, f"tan_suat_cua_hang_{selected_month}.csv",type="fre")
+        if action == "export_onl":
+            return dao.export_csv_fre(stats_onl, f"tan_suat_online_{selected_month_onl}.csv",type="fre")
+
         return self.render(
             'admin/frequency.html',
-            stats=dao.fre_month(month=month_value,year=year),
-            stats_onl=dao.fre_month_onl(month=month_value_onl,year=year_onl),
+            stats=stats,
+            stats_onl=stats_onl,
             selected_month=selected_month,
             selected_month_onl=selected_month_onl
         )
@@ -93,7 +100,7 @@ class RevenueView(MyView):
     def index(self):
         selected_month = request.args.get("month")
         selected_month_onl = request.args.get("month_onl")
-
+        action = request.args.get("action")
         # xử lý giá trị
         if selected_month == "None":
             selected_month = None
@@ -112,10 +119,17 @@ class RevenueView(MyView):
         if selected_month_onl:
             year_onl, month_value_onl = map(int, selected_month_onl.split('-'))
 
+        stats = dao.revenue_stats(month=month_value, year=year)
+        stats_onl = dao.revenue_stats_onl(month=month_value_onl, year=year_onl)
+        if action == "export":
+            return dao.export_csv(stats, f"doanh_thu_cua_hang_{selected_month}.csv",type="revenue")
+        if action == "export_onl":
+            return dao.export_csv(stats_onl, f"doanh_thu_online_{selected_month_onl}.csv",type="revenue")
+        print(type(stats))
         return self.render(
         'admin/revenue.html',
-            stats=dao.revenue_stats(month=month_value,year=year),
-            stats_onl=dao.revenue_stats_onl(month=month_value_onl,year=year_onl),
+            stats=stats,
+            stats_onl=stats_onl,
             selected_month=selected_month,
             selected_month_onl=selected_month_onl
         )

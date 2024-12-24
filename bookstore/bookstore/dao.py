@@ -1,10 +1,10 @@
 import json
 import hashlib
-
+import pandas as pd
 from sqlalchemy.engine import result_tuple
 
 #Update
-
+from flask import make_response
 from models import *
 from bookstore import db
 from sqlalchemy import  extract,func
@@ -199,6 +199,26 @@ def config():
     formatted_data = [(id, role.name, value) for id, role, value in data]
 
     return formatted_data
+
+# Xuất báo cáo
+def export_csv(data, filename,type):
+        # Chuyển dữ liệu thành DataFrame
+        if type=="fre":
+            df = pd.DataFrame(data, columns=["Tên sách", "Tên thể loại", "Số lượng"])
+        if type=="revenue":
+            df = pd.DataFrame(data, columns=["Tên thể loại","Doanh thu"])
+        if type=="kho":
+            df= pd.DataFrame(data, columns=["Mã sách","Tên sách", "Số lượng"])
+
+        # Chuyển DataFrame thành CSV với BOM
+        csv_data = df.to_csv(index=False, encoding="utf-8-sig")
+
+        # Tạo response để tải file
+        response = make_response(csv_data)
+        response.headers["Content-Disposition"] = f"attachment; filename={filename}"
+        response.headers["Content-Type"] = "text/csv; charset=utf-8"
+        return response
+
 if __name__=='__main__':
     print(config())
 

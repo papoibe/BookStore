@@ -114,7 +114,7 @@
           <input type="hidden" name="month" value="{{ selected_month }}">
           <div class="d-flex justify-content-between">
             <button type="submit" name="action" value="stats_onl" class="btn btn-info">Thống kê</button>
-            <button type="submit" name="action" value="export" class="btn btn-success">Xuất báo cáo</button>
+            <button type="submit" name="action" value="export_onl" class="btn btn-success">Xuất báo cáo</button>
           </div>
         </form>
         <!-- Biểu đồ -->
@@ -164,6 +164,7 @@
   }
 
   window.onload = function() {
+
     // Dữ liệu cho biểu đồ cửa hàng
     var labels = [];
     var data = [];

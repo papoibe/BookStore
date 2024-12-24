@@ -4,7 +4,7 @@
 <h2>Lập Hóa Đơn</h2>
 <form method="POST" action="/tai_quay">
     <label for="date">Ngày lập hóa đơn:</label>
-    <input type="date" id="date" name="date">
+    <input type="date" id="date" name="date" value="{{ date }}">
 
     <table id="invoiceTable">
         <thead>
@@ -17,14 +17,27 @@
             </tr>
         </thead>
         <tbody>
+        {% if ma_sach %}
+            {% for i in range(ma_sach|length) %}
             <tr>
-                <td><input type="text" name="book[]" placeholder="Mã sách"oninput="fetchBookInfo(this)"></td>
+                <td><input type="text" name="book[]" value="{{ ma_sach[i] }}" placeholder="Mã sách" oninput="fetchBookInfo(this)"></td>
+                <td><input type="text" name="book_name[]" value="{{ ten_sach[i] }}" placeholder="Tên sách"></td>
+                <td><input type="number" name="price[]" value="{{ gia[i] }}" placeholder="Đơn giá"></td>
+                <td><input type="number" name="quantity[]" value="{{ so_luong[i] }}" min="1" placeholder="Số lượng"></td>
+                <td><input type="number" name="total[]" value="{{ thanh_tien[i] }}" readonly placeholder="Thành tiền"></td>
+                <td><button type="button" class="deleteBtn">Xóa</button></td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td><input type="text" name="book[]" placeholder="Mã sách" oninput="fetchBookInfo(this)"></td>
                 <td><input type="text" name="book_name[]" placeholder="Tên sách"></td>
-                <td><input type="number" name="price[]"  placeholder="Đơn giá"></td>
+                <td><input type="number" name="price[]" placeholder="Đơn giá"></td>
                 <td><input type="number" name="quantity[]" min="1" placeholder="Số lượng"></td>
                 <td><input type="number" name="total[]" readonly placeholder="Thành tiền"></td>
                 <td><button type="button" class="deleteBtn">Xóa</button></td>
             </tr>
+        {% endif %}
         </tbody>
     </table>
 
@@ -32,9 +45,25 @@
         <button type="button" id="addRow">Thêm</button>
     </div>
 
+    <input type="hidden" name="totalQuantity" id="totalQuantityInput">
+    <input type="hidden" name="totalAmount" id="totalAmountInput">
     <div id="summary">
-        <p>Tổng số lượng: <span id="totalQuantity">0</span></p>
-        <p>Tổng tiền: <span id="totalAmount">0</span> VNĐ</p>
+            <p>Tổng số lượng: <span id="totalQuantity" name="totalQuantity">
+                {% if ma_sach %}
+                    {{ totalQuantity }}
+                {% else %}
+                    0
+                {% endif %}
+            </span></p>
+
+            <p>Tổng tiền: <span id="totalAmount" name="totalAmount">
+                {% if ma_sach %}
+                    {{ totalAmount }}
+                {% else %}
+                    0
+                {% endif %}
+            </span> VNĐ</p>
+
     </div>
 
     {% if err_msg %}
@@ -112,6 +141,9 @@
 
         document.getElementById('totalQuantity').textContent = totalQuantity;
         document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
+
+        document.getElementById('totalQuantityInput').value = totalQuantity;
+        document.getElementById('totalAmountInput').value = totalAmount.toFixed(2);
     }
 </script>
 

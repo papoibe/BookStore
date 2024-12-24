@@ -1,10 +1,10 @@
 {%extends 'layout/base.html'%}
 
-{%block content%}
+{% block content %}
 <h2>Phiếu Nhập Sách</h2>
     <form method="POST" action="/kho">
         <label for="date">Ngày nhập:</label>
-        <input type="date" id="date" name="date">
+        <input type="date" id="date" name="date" value="{{ date }}">
 
         <table id="bookTable">
             <thead>
@@ -15,12 +15,23 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td><input type="text" name="book[]" placeholder="Mã sách" oninput="fetchBookInfo(this)"></td>
-                    <td><input type="text" name="book_name[]" placeholder="Tên sách"></td>
-                    <td><input type="number" name="quantity[]" min="1" placeholder="0"></td>
-                    <td><button type="button" class="deleteBtn">Xóa</button></td>
-                </tr>
+                {% if ma_sach %}
+                    {% for i in range(ma_sach|length) %}
+                    <tr>
+                        <td><input type="text" name="book[]" value="{{ ma_sach[i] }}" placeholder="Mã sách" oninput="fetchBookInfo(this)"></td>
+                        <td><input type="text" name="book_name[]" value="{{ ten_sach[i] }}" placeholder="Tên sách"></td>
+                        <td><input type="number" name="quantity[]" value="{{ so_luong[i] }}" min="1" placeholder="0"></td>
+                        <td><button type="button" class="deleteBtn">Xóa</button></td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td><input type="text" name="book[]" placeholder="Mã sách" oninput="fetchBookInfo(this)"></td>
+                        <td><input type="text" name="book_name[]" placeholder="Tên sách"></td>
+                        <td><input type="number" name="quantity[]" min="1" placeholder="0"></td>
+                        <td><button type="button" class="deleteBtn">Xóa</button></td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
 
@@ -31,20 +42,18 @@
         <div class="alert alert-danger" id="errorAlert">
             {{ err_msg }}
         </div>
-
         {% endif %}
 
         {% if success_msg %}
         <div class="alert alert-success" id="successAlert">
-             {{ success_msg }}
+            {{ success_msg }}
         </div>
         {% endif %}
         <div class="bottom-buttons">
             <button type="submit">Nhập sách</button>
-            <button type="button">In phiếu</button>
+            <button type="submit" name="action" value="export">In phiếu</button>
         </div>
     </form>
-
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {

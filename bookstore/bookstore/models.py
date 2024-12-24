@@ -77,7 +77,10 @@ class Sach(db.Model):
     def cap_nhat_so_luong(self, so_luong):
         self.so_luong = self.so_luong + so_luong
 
-
+    def thanh_toan(self,so_luong):
+        self.so_luong=self.so_luong-so_luong
+        db.session.add(self)  # Đảm bảo đối tượng này được theo dõi
+        db.session.commit()
 class User(db.Model, UserMixin):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
