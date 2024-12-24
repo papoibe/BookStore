@@ -28,14 +28,6 @@ class TrangThaiThanhToan(RoleEnum):
     DA_DAT=2
     HUY=3
 
-    def __str__(self):
-        mapping = {
-            TrangThaiThanhToan.DA_THANH_TOAN: "Đã thanh toán",
-            TrangThaiThanhToan.DA_DAT: "Đã đặt hàng",
-            TrangThaiThanhToan.HUY: "Đã hủy"
-        }
-        return mapping.get(self, "Không xác định")
-
 class ConFigRole(RoleEnum):
     NHAP_TOI_THIEU=1
     NHAP_KHI_SO_LUONG_CON_IT_NHAT=2
@@ -88,6 +80,10 @@ class Sach(db.Model):
     def cap_nhat_so_luong(self, so_luong):
         self.so_luong = self.so_luong + so_luong
 
+    def thanh_toan(self, so_luong):
+        self.so_luong = self.so_luong - so_luong
+        db.session.add(self)  # Đảm bảo đối tượng này được theo dõi
+        db.session.commit()
 
 class User(db.Model, UserMixin):
     id = Column(Integer, primary_key=True, autoincrement=True)
