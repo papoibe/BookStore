@@ -4,7 +4,6 @@ import math
 from flask import render_template, request, redirect, session, jsonify, abort
 from sqlalchemy import false
 
-#Update
 
 import dao
 from bookstore import (
@@ -179,8 +178,7 @@ def tai_quay():
             )
             dao.get_sach_by_id(ma_sach[i]).thanh_toan(int(so_luong[i]))
         success_msg = "Nhập phiếu thành công!"
-        print(totalQuantity)
-        print(totalAmount)
+
     return render_template("tai_quay.html",
                            err_msg=err_msg, success_msg=success_msg,
                            ma_sach=ma_sach,
