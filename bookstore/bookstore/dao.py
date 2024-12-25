@@ -141,8 +141,8 @@ def fre_month_onl(month,year):
         .join(DonHang, ChiTietDonHang.ma_don_hang == DonHang.ma_don_hang)
         .join(TheLoai, Sach.ma_the_loai == TheLoai.ma_the_loai)
         .filter(
-            extract("month", HoaDon.ngay_lap) == month,
-            extract("year", HoaDon.ngay_lap) == year,
+            extract("month", DonHang.ngay_tao) == month,
+            extract("year", DonHang.ngay_tao) == year,
             DonHang.trang_thai_thanh_toan==TrangThaiThanhToan.DA_THANH_TOAN
 
         )
@@ -173,21 +173,20 @@ def revenue_stats_onl(month,year):
     data = (
         db.session.query(
             TheLoai.ten_the_loai,
-            func.sum(ChiTietDonHang.so_luong * ChiTietDonHang.gia).label("tong_doanh_thu"),
+            func.sum(ChiTietDonHang.so_luong * ChiTietDonHang.gia)
         )
-        .join(Sach, Sach.ma_sach == ChiTietDonHang.ma_sach)  # Join Sach trước
-        .join(TheLoai, Sach.ma_the_loai == TheLoai.ma_the_loai)  # Kết nối tới TheLoai
+        .join(Sach, Sach.ma_sach == ChiTietDonHang.ma_sach)
+        .join(TheLoai, Sach.ma_the_loai == TheLoai.ma_the_loai)
         .join(DonHang, ChiTietDonHang.ma_don_hang == DonHang.ma_don_hang)
         .filter(
-            extract("month", HoaDon.ngay_lap) == month,
-            extract("year", HoaDon.ngay_lap) == year,
+            extract("month", DonHang.ngay_tao) == month,
+            extract("year", DonHang.ngay_tao) == year,
             DonHang.trang_thai_thanh_toan == TrangThaiThanhToan.DA_THANH_TOAN,
         )
-        .group_by(TheLoai.ten_the_loai)  # Chỉ group_by các cột trong select
+        .group_by(TheLoai.ten_the_loai)
     )
 
     return data.all()
-    return Sach.query.get(id)
 
 def load_categories():
     return TheLoai.query.all()
@@ -269,11 +268,12 @@ def add_receipt(cart, status):
                 so_luong=c['quantity'],
                 gia=c['price']
             )
+            sach=get_sach_by_id(c['id'])
+            sach.thanh_toan(c['quantity'])
         db.session.add(d)
     db.session.commit()
 
 if __name__=='__main__':
-    thanh_toan =get_don_hang_by_id(8)
-    thanh_toan.update_trang_thai_don(TrangThaiThanhToan.DA_THANH_TOAN)
+    print(fre_month_onl(12,2024))
 
 

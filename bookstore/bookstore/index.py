@@ -20,6 +20,8 @@ from sqlalchemy.orm import relationship
 
 @app.route('/history',methods=["GET", "POST"])
 def history():
+    if not current_user.is_authenticated:
+        return render_template('history.html')
     dao.check_qua_han(current_user.id)
     data=dao.get_don_hang_by_ma_KH(current_user.id)
 
