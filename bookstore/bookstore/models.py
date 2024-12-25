@@ -140,6 +140,10 @@ class DonHang(db.Model):
     def __str__(self):
         return str(self.ma_don_hang)
 
+    def update_trang_thai_don(self,value):
+        self.trang_thai_thanh_toan=value
+        db.session.add(self)
+        db.session.commit()
 
 class ChiTietDonHang(db.Model):
     ma_don_hang = Column(Integer, ForeignKey(DonHang.ma_don_hang), primary_key=True)
@@ -179,52 +183,64 @@ class ConFig(db.Model):
         self.value = new_value
         db.session.add(self)  # Đảm bảo đối tượng này được theo dõi
         db.session.commit()  #
-
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
 
-        import json
+        # import json
+        #
+        # #  --- Add tác giả ----
+        # with open('data/tac_gia.json', encoding='utf-8') as f:
+        #     tac_gia = json.load(f)
+        #     for t in tac_gia :
+        #         tac = TacGia(**t)
+        #         db.session.add(tac)
+        # db.session.commit()
+        #
+        # # --- Add thể loại ---
+        # with open('data/the_loai.json', encoding='utf-8') as f:
+        #     the_loai = json.load(f)
+        #     for t in the_loai :
+        #         the = TheLoai(**t)
+        #         db.session.add(the)
+        # db.session.commit()
+        #
+        # #  ----  Add Sach ---
+        # with open("data/sach.json", encoding="utf-8") as f:
+        #     sach = json.load(f)
+        #     for s in sach:
+        #         sach = Sach(**s)
+        #         db.session.add(sach)
+        # db.session.commit()
+        #
+        # # Add admin
+        # import hashlib
+        #
+        # u = User(username="admin",
+        #              password=str(hashlib.md5("123".encode('utf-8')).hexdigest()),
+        #              name="haunguyen",
+        #              user_role=UserRole.ADMIN)
+        # db.session.add(u)
+        # db.session.commit()
+        #
+        # c1 = ConFig(name=ConFigRole.NHAP_TOI_THIEU, value=10)
+        # c2= ConFig(name=ConFigRole.NHAP_KHI_SO_LUONG_CON_IT_NHAT, value=10)
+        # c3=ConFig(name=ConFigRole.QUA_HAN,value=2)
+        #
+        # db.session.add(c1)
+        # db.session.add(c2)
+        # db.session.add(c3)
+        # db.session.commit()
 
-        #  --- Add tác giả ----
-        with open('data/tac_gia.json', encoding='utf-8') as f:
-            tac_gia = json.load(f)
-            for t in tac_gia :
-                tac = TacGia(**t)
-                db.session.add(tac)
-        db.session.commit()
+        # d1=DonHang(ma_khach_hang=4,ngay_tao=datetime.now(),trang_thai_thanh_toan=TrangThaiThanhToan.DA_THANH_TOAN)
+        # d2=DonHang(ma_khach_hang=4,ngay_tao=datetime.now(),trang_thai_thanh_toan=TrangThaiThanhToan.DA_DAT)
+        # d3=DonHang(ma_khach_hang=4,ngay_tao=datetime.now(),trang_thai_thanh_toan=TrangThaiThanhToan.HUY)
+        #
+        # db.session.add(d1)
+        # db.session.add(d2)
+        # db.session.add(d3)
+        # db.session.commit()
 
-        # --- Add thể loại ---
-        with open('data/the_loai.json', encoding='utf-8') as f:
-            the_loai = json.load(f)
-            for t in the_loai :
-                the = TheLoai(**t)
-                db.session.add(the)
-        db.session.commit()
-
-        #  ----  Add Sach ---
-        with open("data/sach.json", encoding="utf-8") as f:
-            sach = json.load(f)
-            for s in sach:
-                sach = Sach(**s)
-                db.session.add(sach)
-        db.session.commit()
-
-        # Add admin
-        import hashlib
-
-        u = User(username="admin",
-                     password=str(hashlib.md5("123".encode('utf-8')).hexdigest()),
-                     name="haunguyen",
-                     user_role=UserRole.ADMIN)
-        db.session.add(u)
-        db.session.commit()
-
-        c1 = ConFig(name=ConFigRole.NHAP_TOI_THIEU, value=10)
-        c2= ConFig(name=ConFigRole.NHAP_KHI_SO_LUONG_CON_IT_NHAT, value=10)
-        c3=ConFig(name=ConFigRole.QUA_HAN,value=2)
-
-        db.session.add(c1)
-        db.session.add(c2)
-        db.session.add(c3)
+        d = DonHang(ma_khach_hang=4, ngay_tao=datetime.now(), trang_thai_thanh_toan=TrangThaiThanhToan.DA_DAT)
+        db.session.add(d)
         db.session.commit()

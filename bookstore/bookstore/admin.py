@@ -84,7 +84,7 @@ class FrequencyView(MyView):
         if action == "export":
             return dao.export_csv(stats, f"tan_suat_cua_hang_{selected_month}.csv",type="fre")
         if action == "export_onl":
-            return dao.export_csv_fre(stats_onl, f"tan_suat_online_{selected_month_onl}.csv",type="fre")
+            return dao.export_csv(stats_onl, f"tan_suat_online_{selected_month_onl}.csv",type="fre")
 
         return self.render(
             'admin/frequency.html',

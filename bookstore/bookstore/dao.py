@@ -192,6 +192,21 @@ def revenue_stats_onl(month,year):
 def load_categories():
     return TheLoai.query.all()
 
+def get_don_hang_by_ma_KH(id):
+    return db.session.query(
+        DonHang.ma_don_hang,
+        DonHang.ngay_tao,
+        DonHang.trang_thai_thanh_toan
+    ).filter(DonHang.ma_khach_hang==id).all()
+def check_qua_han(id):
+    data = db.session.query(DonHang).filter(DonHang.ma_khach_hang == id).all()
+    for d in data:
+        if (datetime.now()-d.ngay_tao).days > get_config_by_role(ConFigRole.QUA_HAN).value:
+            d.update_trang_thai_don(TrangThaiThanhToan.HUY)
+def get_don_hang_by_id(id):
+    return db.session.query(DonHang).filter(DonHang.ma_don_hang == id).first()
+
+
 def config():
     data = db.session.query(ConFig.id, ConFig.name, ConFig.value).all()
 
@@ -220,7 +235,45 @@ def export_csv(data, filename,type):
         response.headers["Content-Type"] = "text/csv; charset=utf-8"
         return response
 
+def count_cart(cart):
+    total_quantity, total_amount = 0, 0
+
+    if cart:
+        for c in cart.values():
+            total_quantity += c['quantity']
+            total_amount += c['quantity'] * c['price']
+
+    return {
+        'total_quantity': total_quantity,
+        'total_amount': total_amount
+    }
+
+
+def add_receipt(cart, status):
+    if not cart:
+        raise ValueError("Giỏ hàng trống.")
+
+    if cart:
+        receipt = DonHang(
+            ma_khach_hang=current_user.id,
+            ngay_tao=datetime.now(),
+            trang_thai_thanh_toan=status
+        )
+        db.session.add(receipt)
+        db.session.flush()  # Đẩy dữ liệu tạm để lấy ma_don_hang
+
+        for c in cart.values():
+            d = ChiTietDonHang(
+                ma_don_hang=receipt.ma_don_hang,
+                ma_sach=c['id'],
+                so_luong=c['quantity'],
+                gia=c['price']
+            )
+        db.session.add(d)
+    db.session.commit()
+
 if __name__=='__main__':
-    print(config())
+    thanh_toan =get_don_hang_by_id(8)
+    thanh_toan.update_trang_thai_don(TrangThaiThanhToan.DA_THANH_TOAN)
 
 

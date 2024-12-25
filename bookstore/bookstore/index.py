@@ -12,12 +12,37 @@ from bookstore import (
     admin,
     login,
 )
-from flask_login import login_user, logout_user, current_user
-from models import UserRole,ConFigRole
+from flask_login import login_user, logout_user, current_user,login_required
+from models import UserRole,ConFigRole,TrangThaiThanhToan
 import cloudinary.uploader
 from flask_login import UserMixin
 from sqlalchemy.orm import relationship
 
+@app.route('/history',methods=["GET", "POST"])
+def history():
+    dao.check_qua_han(current_user.id)
+    data=dao.get_don_hang_by_ma_KH(current_user.id)
+
+    if request.method=="POST":
+        action = request.form.get("action")
+        id=request.form.get("order_id")
+        print(id)
+
+        if action=="Pay":
+
+            print("đã nhận")
+            thanh_toan=dao.get_don_hang_by_id(id)
+            thanh_toan.update_trang_thai_don(TrangThaiThanhToan.DA_THANH_TOAN)
+
+        if action=="Cancel":
+
+            print("đã hủy")
+            huy=dao.get_don_hang_by_id(id)
+            huy.update_trang_thai_don(TrangThaiThanhToan.HUY)
+
+        data = dao.get_don_hang_by_ma_KH(current_user.id)
+        return render_template('history.html', data=data)
+    return render_template('history.html',data=data)
 
 
 @app.route('/')
@@ -255,6 +280,129 @@ def details(id):
     if not sach:
         abort(404)
     return render_template('product-details.html', sach=sach, categories=categories)
+
+
+@app.context_processor
+def common_responce():
+    return {
+        'categories': dao.load_categories(),
+        'cart_stats': dao.count_cart(session.get('cart'))
+    }
+
+
+@app.route('/cart')
+def cart():
+    return render_template('cart.html',
+                           stats=dao.count_cart(session.get('cart')))
+
+
+@app.route('/api/add-cart', methods=['post'])
+def add_to_cart():
+    data = request.json
+
+    ma_sach = str(data.get('ma_sach'))
+    ten_sach = data.get('ten_sach', '')
+    gia = data.get('gia')
+
+    cart = session.get('cart')
+    if not cart:
+        cart = {}
+
+    if ma_sach in cart:
+        cart[ma_sach]['quantity'] = cart[ma_sach]['quantity'] + 1
+    else:
+        cart[ma_sach] = {
+            'id': ma_sach,
+            'name': ten_sach,
+            'price': gia,
+            'quantity': 1
+        }
+
+    session['cart'] = cart
+
+    return jsonify(dao.count_cart(cart))
+
+
+@app.route('/api/pay', methods=['post'])
+@login_required
+def pay():
+    try:
+        cart = session.get('cart')
+        if not cart:
+            print("Giỏ hàng trống!")
+            return jsonify({'code': 400, 'message': 'Giỏ hàng trống!'})
+
+        # Gọi hàm thêm đơn hàng vào DB
+        dao.add_receipt(cart, status=TrangThaiThanhToan.DA_THANH_TOAN)
+        del session['cart']  # Xóa giỏ hàng sau khi thanh toán thành công
+        return jsonify({'code': 200, 'message': 'Thanh toán thành công'})
+
+    except Exception as e:
+        print(f"Lỗi khi thêm đơn hàng: {e}")  # In lỗi ra console
+        return jsonify({'code': 400, 'message': 'Thanh toán thất bại!'})
+
+
+@app.route('/api/order', methods=['post'])
+@login_required
+def order():
+    try:
+        cart = session.get('cart')
+        if not cart:
+            print("Giỏ hàng trống!")
+            return jsonify({'code': 400, 'message': 'Giỏ hàng trống!'})
+
+        # Gọi hàm thêm đơn hàng vào DB
+        dao.add_receipt(cart, status=TrangThaiThanhToan.DA_DAT)
+        del session['cart']  # Xóa giỏ hàng sau khi thanh toán thành công
+        return jsonify({'code': 200, 'message': 'Thanh toán thành công'})
+
+    except Exception as e:
+        print(f"Lỗi khi thêm đơn hàng: {e}")  # In lỗi ra console
+        return jsonify({'code': 400, 'message': 'Thanh toán thất bại!'})
+
+
+@app.route('/update-cart', methods=['POST'])
+def update_cart():
+    data = request.get_json()
+    product_id = data.get('id')
+    quantity = data.get('quantity')
+
+    if 'cart' in session:
+        cart = session['cart']
+        if product_id in cart:
+            cart[product_id]['quantity'] = int(quantity)
+            session['cart'] = cart
+            return jsonify({'success': True})
+
+    return jsonify({'success': False})
+
+
+@app.route('/api/delete-cart/<product_id>', methods=['DELETE'])
+def delete_cart(product_id):
+    cart = session.get('cart', {})  # Lấy giỏ hàng từ session, mặc định là dictionary rỗng
+
+    if product_id in cart:  # Kiểm tra nếu sản phẩm có trong giỏ hàng
+        del cart[product_id]  # Xóa sản phẩm khỏi giỏ hàng
+
+        session['cart'] = cart  # Cập nhật lại giỏ hàng trong session
+
+        session['cart'] = cart  # Cập nhật lại giỏ hàng trong session
+
+        # Trả về JSON với thông tin giỏ hàng đã được cập nhật và mã trạng thái
+        return jsonify({
+            'code': 200,
+            'message': 'Cập nhật giỏ hàng thành công!',
+            'cart': cart,
+            'total_items': dao.count_cart(cart)  # Giả sử dao.count_cart trả về tổng số lượng sản phẩm trong giỏ
+        })
+
+    else:
+        # Trả về JSON nếu sản phẩm không có trong giỏ hàng
+        return jsonify({
+            'code': 404,
+            'message': 'Sản phẩm không có trong giỏ hàng!'
+        })
+
 
 
 if __name__ == "__main__":
