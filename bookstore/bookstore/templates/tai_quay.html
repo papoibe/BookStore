@@ -1,370 +1,397 @@
 {%extends 'layout/base.html'%}
 
 {%block content%}
+<!-- CSS cho trang lập hóa đơn -->
 <style>
+    /* Container chính chứa toàn bộ nội dung hóa đơn */
     .invoice-container {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 20px;
-    background: #fff;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+        background: #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
 
-h2 {
-    color: #2196F3;
-    margin-bottom: 25px;
-    font-size: 24px;
-    font-weight: 600;
-}
+    /* Style cho tiêu đề hóa đơn */
+    h2 {
+        color: #2196F3;
+        margin-bottom: 25px;
+        font-size: 24px;
+        font-weight: 600;
+    }
 
-/* Date Input Styles */
-.date-input {
-    margin-bottom: 20px;
-}
+    /* Style cho phần nhập ngày tháng */
+    .date-input {
+        margin-bottom: 20px;
+    }
 
-.date-input label {
-    display: block;
-    margin-bottom: 5px;
-    color: #333;
-    font-weight: 500;
-}
+    .date-input label {
+        display: block;
+        margin-bottom: 5px;
+        color: #333;
+        font-weight: 500;
+    }
 
-.date-input input[type="date"] {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-}
+    .date-input input[type="date"] {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
 
-/* Table Styles */
-#invoiceTable {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-}
+    /* Style cho bảng chi tiết hóa đơn */
+    #invoiceTable {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
 
-#invoiceTable th {
-    background-color: #F2F9FF;
-    color: #333;
-    font-weight: 600;
-    padding: 12px;
-    text-align: left;
-    border: 1px solid #ddd;
-}
+    /* Style cho header của bảng */
+    #invoiceTable th {
+        background-color: #F2F9FF;
+        color: #333;
+        font-weight: 600;
+        padding: 12px;
+        text-align: left;
+        border: 1px solid #ddd;
+    }
 
-#invoiceTable td {
-    padding: 8px;
-    border: 1px solid #ddd;
-}
+    /* Style cho các ô trong bảng */
+    #invoiceTable td {
+        padding: 8px;
+        border: 1px solid #ddd;
+    }
 
-#invoiceTable input {
-    width: 100%;
-    padding: 6px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-}
+    /* Style cho input trong bảng */
+    #invoiceTable input {
+        width: 100%;
+        padding: 6px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
 
-#invoiceTable input[readonly] {
-    background-color: #f5f5f5;
-}
+    /* Style cho input chỉ đọc */
+    #invoiceTable input[readonly] {
+        background-color: #f5f5f5;
+    }
 
-/* Button Styles */
-.btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s;
-}
+    /* Style chung cho các nút bấm */
+    .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s;
+    }
 
-.btn-primary {
-    background-color: #2196F3;
-    color: white;
-}
+    /* Style cho các loại nút khác nhau */
+    .btn-primary {
+        background-color: #2196F3;
+        color: white;
+    }
 
-.btn-danger {
-    background-color: #dc3545;
-    color: white;
-}
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
 
-.btn-secondary {
-    background-color: #6c757d;
-    color: white;
-}
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
 
-.deleteBtn {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-}
+    /* Style cho nút xóa trong bảng */
+    .deleteBtn {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
 
-#addRow {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    margin: 10px 0;
-    cursor: pointer;
-}
+    /* Style cho nút thêm dòng mới */
+    #addRow {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        margin: 10px 0;
+        cursor: pointer;
+    }
 
-/* Summary Section */
-#summary {
-    margin: 20px 0;
-    padding: 15px;
-    background-color: #F2F9FF;
-    border-radius: 4px;
-}
+    /* Style cho phần tổng kết */
+    #summary {
+        margin: 20px 0;
+        padding: 15px;
+        background-color: #F2F9FF;
+        border-radius: 4px;
+    }
 
-#summary p {
-    margin: 8px 0;
-    font-size: 16px;
-    color: #333;
-}
+    #summary p {
+        margin: 8px 0;
+        font-size: 16px;
+        color: #333;
+    }
 
-#summary span {
-    font-weight: 600;
-    color: #2196F3;
-}
+    #summary span {
+        font-weight: 600;
+        color: #2196F3;
+    }
 
-/* Alert Messages */
-.alert {
-    padding: 12px;
-    margin: 15px 0;
-    border-radius: 4px;
-}
+    /* Style cho các thông báo */
+    .alert {
+        padding: 12px;
+        margin: 15px 0;
+        border-radius: 4px;
+    }
 
-.alert-danger {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
 
-.alert-success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
 
-/* Bottom Buttons Section */
-.bottom-buttons {
-    margin-top: 20px;
-    display: flex;
-    gap: 10px;
-}
+    /* Style cho phần nút bấm ở cuối form */
+    .bottom-buttons {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+    }
 
-.bottom-buttons button {
-    padding: 10px 20px;
-    font-size: 14px;
-    border-radius: 4px;
-    cursor: pointer;
-}
+    .bottom-buttons button {
+        padding: 10px 20px;
+        font-size: 14px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
 
-.bottom-buttons button[type="submit"] {
-    background-color: #2196F3;
-    color: white;
-    border: none;
-}
+    .bottom-buttons button[type="submit"] {
+        background-color: #2196F3;
+        color: white;
+        border: none;
+    }
 
-.bottom-buttons button[value="export"] {
-    background-color: #6c757d;
-    color: white;
-    border: none;
-}
+    .bottom-buttons button[value="export"] {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+    }
 
+    /* Style cho chế độ in ấn */
+    @media print {
+        .no-print {
+            display: none;
+        }
+        .invoice-container {
+            box-shadow: none;
+        }
+        #invoiceTable {
+            border: 1px solid #000;
+        }
+        #invoiceTable th,
+        #invoiceTable td {
+            border: 1px solid #000;
+        }
+    }
 </style>
 
-<h2>Lập Hóa Đơn</h2>
-<form method="POST" action="/tai_quay">
+<!-- Container chính của hóa đơn -->
+<div class="invoice-container">
+    <h2>Lập Hóa Đơn</h2>
+    <!-- Form chính để nhập thông tin hóa đơn -->
+    <form method="POST" action="/tai_quay" id="invoiceForm">
+        <!-- Phần nhập ngày tháng -->
+        <div class="date-input">
+            <label for="date">Ngày lập hóa đơn:</label>
+            <input type="date" id="date" name="date" value="{{ date if date else '' }}" required>
+        </div>
 
-<div class="date-input">
-    <label for="date">Ngày lập hóa đơn:</label>
-    <input type="date" id="date" name="date" value="{{ date }}">
+        <!-- Bảng chi tiết hóa đơn -->
+        <table id="invoiceTable">
+            <thead>
+                <tr>
+                    <th>Mã sách</th>
+                    <th>Tên sách</th>
+                    <th>Đơn giá</th>
+                    <th>Số lượng</th>
+                    <th>Thành tiền</th>
+                    <th class="no-print">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+            <!-- Kiểm tra nếu có dữ liệu sẵn thì hiển thị -->
+            {% if ma_sach %}
+                {% for i in range(ma_sach|length) %}
+                <tr>
+                    <td><input type="text" name="book[]" value="{{ ma_sach[i] }}" oninput="fetchBookInfo(this)" required></td>
+                    <td><input type="text" name="book_name[]" value="{{ ten_sach[i] }}" readonly></td>
+                    <td><input type="number" name="price[]" value="{{ gia[i] }}" readonly></td>
+                    <td><input type="number" name="quantity[]" value="{{ so_luong[i] }}" min="1" oninput="calculateTotal(this)"></td>
+                    <td><input type="number" name="total[]" value="{{ thanh_tien[i] }}" readonly></td>
+                    <td class="no-print"><button type="button" class="deleteBtn" onclick="deleteRow(this)">Xóa</button></td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <!-- Nếu không có dữ liệu thì hiển thị một dòng trống -->
+                <tr>
+                    <td><input type="text" name="book[]" oninput="fetchBookInfo(this)" required></td>
+                    <td><input type="text" name="book_name[]" readonly></td>
+                    <td><input type="number" name="price[]" readonly></td>
+                    <td><input type="number" name="quantity[]" min="1" oninput="calculateTotal(this)"></td>
+                    <td><input type="number" name="total[]" readonly></td>
+                    <td class="no-print"><button type="button" class="deleteBtn" onclick="deleteRow(this)">Xóa</button></td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+
+        <!-- Nút thêm dòng mới -->
+        <div class="add-button no-print">
+            <button type="button" class="btn btn-success" id="addRow">Thêm sách</button>
+        </div>
+
+        <!-- Input ẩn để lưu tổng số lượng và tổng tiền -->
+        <input type="hidden" name="totalQuantity" id="totalQuantityInput">
+        <input type="hidden" name="totalAmount" id="totalAmountInput">
+
+        <!-- Phần hiển thị tổng kết -->
+        <div id="summary">
+            <p>Tổng số lượng: <span id="totalQuantity">{{ totalQuantity if totalQuantity else 0 }}</span></p>
+            <p>Tổng tiền: <span id="totalAmount">{{ totalAmount if totalAmount else 0 }}</span> VNĐ</p>
+        </div>
+
+        <!-- Hiển thị thông báo lỗi nếu có -->
+        {% if err_msg %}
+        <div class="alert alert-danger no-print">{{ err_msg }}</div>
+        {% endif %}
+
+        <!-- Hiển thị thông báo thành công nếu có -->
+        {% if success_msg %}
+        <div class="alert alert-success no-print">{{ success_msg }}</div>
+        {% endif %}
+
+        <!-- Các nút thao tác cuối form -->
+        <div class="bottom-buttons no-print">
+            <button type="submit">Lập hóa đơn</button>
+            <button type="submit" name="action" value="export">Xuất CSV</button>
+            <button type="button" onclick="printInvoice()">In hóa đơn</button>
+        </div>
+    </form>
 </div>
 
-    <table id="invoiceTable">
-        <thead>
-            <tr>
-                <th>Mã sách</th>
-                <th>Tên sách</th>
-                <th>Đơn giá</th>
-                <th>Số lượng</th>
-                <th>Thành tiền</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% if ma_sach %}
-            {% for i in range(ma_sach|length) %}
-            <tr>
-                <td><input type="text" name="book[]" value="{{ ma_sach[i] }}" placeholder="Mã sách" oninput="fetchBookInfo(this)"></td>
-                <td><input type="text" name="book_name[]" value="{{ ten_sach[i] }}" placeholder="Tên sách"></td>
-                <td><input type="number" name="price[]" value="{{ gia[i] }}" placeholder="Đơn giá"></td>
-                <td><input type="number" name="quantity[]" value="{{ so_luong[i] }}" min="1" placeholder="Số lượng"></td>
-                <td><input type="number" name="total[]" value="{{ thanh_tien[i] }}" readonly placeholder="Thành tiền"></td>
-                <td><button type="button" class="deleteBtn">Xóa</button></td>
-            </tr>
-            {% endfor %}
-        {% else %}
-            <tr>
-                <td><input type="text" name="book[]" placeholder="Mã sách" oninput="fetchBookInfo(this)"></td>
-                <td><input type="text" name="book_name[]" placeholder="Tên sách"></td>
-                <td><input type="number" name="price[]" placeholder="Đơn giá"></td>
-                <td><input type="number" name="quantity[]" min="1" placeholder="Số lượng"></td>
-                <td><input type="number" name="total[]" readonly placeholder="Thành tiền"></td>
-                <td><button type="button" class="btn btn-danger deleteBtn">Xóa</button></td>
-            </tr>
-        {% endif %}
-        </tbody>
-    </table>
-
-    <div class="add-button">
-       <button type="button" class="btn btn-success" id="addRow">Thêm</button>
-    </div>
-
-    <input type="hidden" name="totalQuantity" id="totalQuantityInput">
-    <input type="hidden" name="totalAmount" id="totalAmountInput">
-    <div id="summary">
-            <p>Tổng số lượng: <span id="totalQuantity" name="totalQuantity">
-                {% if ma_sach %}
-                    {{ totalQuantity }}
-                {% else %}
-                    0
-                {% endif %}
-            </span></p>
-
-            <p>Tổng tiền: <span id="totalAmount" name="totalAmount">
-                {% if ma_sach %}
-                    {{ totalAmount }}
-                {% else %}
-                    0
-                {% endif %}
-            </span> VNĐ</p>
-
-    </div>
-
-    {% if err_msg %}
-    <div class="alert alert-danger" id="errorAlert">
-        {{ err_msg }}
-    </div>
-    {% endif %}
-
-    {% if success_msg %}
-    <div class="alert alert-success" id="successAlert">
-        {{ success_msg }}
-    </div>
-    {% endif %}
-
-    <div class="bottom-buttons">
-        <button type="submit">Lập hóa đơn</button>
-        <button type="submit" name="action" value="export">In hóa đơn</button>
-    </div>
-</form>
-
+<!-- JavaScript xử lý các chức năng -->
 <script>
-    // Thêm hàng mới
-    document.getElementById('addRow').addEventListener('click', function() {
-        const tableBody = document.querySelector('#invoiceTable tbody');
-        const newRow = document.createElement('tr');
+    // Hàm lấy thông tin sách khi nhập mã sách
+    async function fetchBookInfo(input) {
+        const row = input.closest('tr');
+        const bookCode = input.value.trim();
 
-        newRow.innerHTML = `
-            <td><input type="text" name="book[]" placeholder="Mã sách" oninput="fetchBookInfo(this)"></td>
-            <td><input type="text" name="book_name[]" placeholder="Tên sách"></td>
-            <td><input type="number" name="price[]" placeholder="Đơn giá"></td>
-            <td><input type="number" name="quantity[]" min="1" placeholder="Số lượng"></td>
-            <td><input type="number" name="total[]" readonly placeholder="Thành tiền"></td>
-            <td><button type="button" class="deleteBtn">Xóa</button></td>
-        `;
-        tableBody.appendChild(newRow);
-
-        // Cập nhật tổng sau khi thêm
-        updateTotal();
-    });
-
-    // Xóa hàng
-    document.querySelector('#invoiceTable').addEventListener('click', function(event) {
-        if (event.target.classList.contains('deleteBtn')) {
-            const row = event.target.closest('tr');
-            row.remove();
-            updateTotal();
+        if (!bookCode) {
+            resetRowFields(row);
+            return;
         }
-    });
-
-    // Cập nhật thành tiền khi thay đổi giá hoặc số lượng
-    document.querySelector('#invoiceTable').addEventListener('input', function(event) {
-        if (event.target.name === 'price[]' || event.target.name === 'quantity[]') {
-            const row = event.target.closest('tr');
-            const price = parseFloat(row.querySelector('[name="price[]"]').value) || 0;
-            const quantity = parseInt(row.querySelector('[name="quantity[]"]').value) || 0;
-            const total = price * quantity;
-            row.querySelector('[name="total[]"]').value = total.toFixed(2);
-            updateTotal();
-        }
-    });
-
-    // Tính tổng số lượng và tổng tiền
-    function updateTotal() {
-        let totalQuantity = 0;
-        let totalAmount = 0;
-        const rows = document.querySelectorAll('#invoiceTable tbody tr');
-
-        rows.forEach(function(row) {
-            const quantity = parseInt(row.querySelector('[name="quantity[]"]').value) || 0;
-            const total = parseFloat(row.querySelector('[name="total[]"]').value) || 0;
-
-            totalQuantity += quantity;
-            totalAmount += total;
-        });
-
-        document.getElementById('totalQuantity').textContent = totalQuantity;
-        document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
-
-        document.getElementById('totalQuantityInput').value = totalQuantity;
-        document.getElementById('totalAmountInput').value = totalAmount.toFixed(2);
-    }
-</script>
-
-<script>
-     async function fetchBookInfo(inputElement) {
-        const row = inputElement.closest('tr');
-        const maSach = inputElement.value;
 
         try {
+            // Gọi API để lấy thông tin sách
             const response = await fetch('/api/sach', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ ma_sach: maSach })
+                body: JSON.stringify({ ma_sach: bookCode })
             });
 
-            if (response.ok) {
-                const data = await response.json();
-                if (data.success) {
-                    row.querySelector('[name="book_name[]"]').value = data.ten_sach;
-                    row.querySelector('[name="price[]"]').value = data.gia;
-                    updateTotal();
-                } else {
-                    resetRowFields(row);
-                }
+            const data = await response.json();
+
+            // Nếu tìm thấy sách, điền thông tin vào các ô
+            if (data.success) {
+                row.querySelector('[name="book_name[]"]').value = data.ten_sach;
+                row.querySelector('[name="price[]"]').value = data.gia;
+                calculateTotal(row.querySelector('[name="quantity[]"]'));
             } else {
                 resetRowFields(row);
             }
         } catch (error) {
-            console.error('Lỗi khi lấy thông tin sách:', error);
-            alert('Đã xảy ra lỗi. Vui lòng thử lại!');
+            console.error('Error fetching book info:', error);
+            resetRowFields(row);
         }
     }
 
-    // Hàm đặt lại các trường thông tin trong hàng
+    // Hàm reset các trường trong một dòng
     function resetRowFields(row) {
         row.querySelector('[name="book_name[]"]').value = '';
         row.querySelector('[name="price[]"]').value = '';
-        updateTotal();
+        row.querySelector('[name="total[]"]').value = '';
+        updateTotalSummary();
     }
+
+    // Hàm tính tổng tiền cho một dòng
+    function calculateTotal(input) {
+        const row = input.closest('tr');
+        const price = parseFloat(row.querySelector('[name="price[]"]').value) || 0;
+        const quantity = parseInt(input.value) || 0;
+        row.querySelector('[name="total[]"]').value = (price * quantity).toFixed(2);
+        updateTotalSummary();
+    }
+
+    // Hàm cập nhật tổng số lượng và tổng tiền
+    function updateTotalSummary() {
+        let totalQuantity = 0;
+        let totalAmount = 0;
+
+        // Tính tổng từ tất cả các dòng
+        document.querySelectorAll('#invoiceTable tbody tr').forEach(row => {
+            totalQuantity += parseInt(row.querySelector('[name="quantity[]"]').value) || 0;
+            totalAmount += parseFloat(row.querySelector('[name="total[]"]').value) || 0;
+        });
+
+        // Cập nhật hiển thị và giá trị input ẩn
+        document.getElementById('totalQuantity').textContent = totalQuantity;
+        document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
+        document.getElementById('totalQuantityInput').value = totalQuantity;
+        document.getElementById('totalAmountInput').value = totalAmount.toFixed(2);
+    }
+
+    // Thêm sự kiện click cho nút thêm dòng mới
+    document.getElementById('addRow').addEventListener('click', function() {
+        const tbody = document.querySelector('#invoiceTable tbody');
+        const newRow = document.createElement('tr');
+        // Tạo HTML cho dòng mới
+        newRow.innerHTML = `
+            <td><input type="text" name="book[]" oninput="fetchBookInfo(this)" required></td>
+            <td><input type="text" name="book_name[]" readonly></td>
+            <td><input type="number" name="price[]" readonly></td>
+            <td><input type="number" name="quantity[]" min="1" oninput="calculateTotal(this)"></td>
+            <td><input type="number" name="total[]" readonly></td>
+            <td class="no-print"><button type="button" class="deleteBtn" onclick="deleteRow(this)">Xóa</button></td>
+        `;
+        tbody.appendChild(newRow);
+    });
+
+    // Hàm xóa một dòng
+    function deleteRow(button) {
+        button.closest('tr').remove();
+        updateTotalSummary();
+    }
+
+    // Hàm in hóa đơn
+    function printInvoice() {
+        window.print();
+    }
+
+    // Khởi tạo tổng số lượng và tổng tiền khi trang được tải
+    document.addEventListener('DOMContentLoaded', function() {
+        updateTotalSSummary();
+    });
 </script>
 {%endblock%}
