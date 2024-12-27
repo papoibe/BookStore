@@ -217,6 +217,11 @@ def check_qua_han(id):
 def get_don_hang_by_id(id):
     return db.session.query(DonHang).filter(DonHang.ma_don_hang == id).first()
 
+def get_chi_tiet_by_ma_hoa_don(id):
+    return db.session.query(
+        ChiTietDonHang.ma_sach,
+        ChiTietDonHang.so_luong,
+    ).filter(ChiTietDonHang.ma_don_hang == id).all()
 
 def config():
     data = db.session.query(ConFig.id, ConFig.name, ConFig.value).all()

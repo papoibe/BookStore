@@ -17,7 +17,7 @@ admin = Admin(app, name="E-commerce Website", template_mode="bootstrap4",index_v
 class UserView(ModelView):
     column_list = ["id","username","name","user_role"]
     column_searchable_list = ["id","username","user_role"]
-    form_excluded_columns = ["phieu_nhap_sach", "don_hang", "hoa_don"]
+    form_excluded_columns = ["phieu_nhap_sach", "don_hang", "hoa_don","comments"]
 
     # xử lý băm mật khẩu trước khi lưu
     def on_model_change(self, form, model, is_created):

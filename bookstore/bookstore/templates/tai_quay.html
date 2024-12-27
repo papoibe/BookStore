@@ -210,13 +210,6 @@
     <h2>Lập Hóa Đơn</h2>
     <!-- Form chính để nhập thông tin hóa đơn -->
     <form method="POST" action="/tai_quay" id="invoiceForm">
-        <!-- Phần nhập ngày tháng -->
-        <div class="date-input">
-            <label for="date">Ngày lập hóa đơn:</label>
-            <input type="date" id="date" name="date" value="{{ date if date else '' }}" required>
-        </div>
-
-        <!-- Bảng chi tiết hóa đơn -->
         <table id="invoiceTable">
             <thead>
                 <tr>
