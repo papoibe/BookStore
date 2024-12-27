@@ -214,6 +214,24 @@ def tai_quay():
                 totalAmount=totalAmount
             )
 
+        # vượt quá số lượng sách trong kho
+        for i in range(len(ma_sach)):
+            sach=dao.get_sach_by_id(ma_sach[i])
+            if int(so_luong[i]) >  sach.so_luong:
+                err_msg = f"Sách {sach.ten_sach} không đủ số lượng trong kho ({sach.so_luong})"
+                return render_template(
+                    "tai_quay.html",
+                    err_msg=err_msg, success_msg=success_msg,
+                    ma_sach=ma_sach,
+                    so_luong=so_luong,
+                    ten_sach=ten_sach,
+                    gia=gia,
+                    thanh_tien=thanh_tien,
+                    date=date,
+                    totalQuantity=totalQuantity,
+                    totalAmount=totalAmount
+                )
+
         id = dao.add_hoa_don(current_user.get_id(), date)
         for i in range(len(ma_sach)):
             dao.add_chi_tiet_hoa_don(
