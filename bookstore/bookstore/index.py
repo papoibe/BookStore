@@ -13,6 +13,8 @@ from bookstore import (
     login,
 )
 from flask_login import login_user, logout_user, current_user,login_required
+
+from models import Comment
 from models import UserRole,ConFigRole,TrangThaiThanhToan
 import cloudinary.uploader
 from flask_login import UserMixin
@@ -275,13 +277,50 @@ def logout_my_user():
     return redirect("/login")
 
 
+
+@app.route('/api/comments', methods=['post'])
+@login_required
+def add_comment():
+     data = request.json
+     content = data.get('content')
+     ma_sach = data.get('ma_sach')
+
+     try:
+         comment = dao.add_comment(content=content,
+                                   ma_sach=ma_sach,
+                                   user_id=current_user.id)
+
+         # Trả về kết quả thành công với thông tin comment
+         return jsonify({
+             'status': 200,
+             'comment': {
+                 'id': comment.id,
+                 'content': comment.content,
+                 'created_date': comment.created_date.strftime('%Y-%m-%d %H:%M:%S'),# Ngày tạo comment
+                 'user': {
+                     'username': current_user.username,
+                     'avatar': current_user.avatar
+
+                 }
+             }
+         })
+     except Exception as ex:
+         return jsonify({'status': 500, 'Chương trình bị lỗi': str(ex)}), 500
+
+
+
+
 @app.route('/sach/<int:id>')
 def details(id):
     sach = dao.load_sach_by_id(id)
     categories = dao.load_categories()
     if not sach:
         abort(404)
-    return render_template('product-details.html', sach=sach, categories=categories)
+
+    comments = Comment.query.filter_by(ma_sach=id).order_by(Comment.created_date.desc()).all()
+    return render_template('product-details.html',
+                           sach=sach, categories=categories,
+                           comments=comments)
 
 
 @app.context_processor

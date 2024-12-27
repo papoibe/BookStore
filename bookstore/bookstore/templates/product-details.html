@@ -65,6 +65,39 @@
     </div>
 </div>
 
+{% if current_user.is_authenticated %}
+<div class="form-group">
+    <textarea class="form-control" id="commentId"
+              placeholder="Nhập nội dung bình luận:"></textarea>
+</div>
+<input type="button"
+       onclick="addComment({{sach.ma_sach}})"
+       class="btn btn-primary" value="Bình luận"/>
+
+{% else %}
+<a href="{{ url_for('logout_my_user') }}">Đăng nhập để bình luận...</a>
+{% endif %}
+
+<!-- Đặt phần hiển thị comments ở đây -->
+<div class="container mt-4">
+    <div id="commentArea">
+        {% for comment in sach.comments %}
+        <div class="row mb-3">
+            <div class="col-md-1">
+                <img src="{{ comment.user.avatar }}"
+                     class="img-fluid rounded-circle" alt="user avatar" />
+            </div>
+            <div class="col-md-10">
+                <p class="mb-1">{{ comment.content }}</p>
+                <small class="text-muted">
+                    {{ comment.created_date.strftime('%Y-%m-%d %H:%M') }}
+                </small>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
 <script>
 document.getElementById('them-vao-gio').addEventListener('click', function() {
     const quantity = document.getElementById('so-luong').value;

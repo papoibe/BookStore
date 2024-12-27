@@ -122,3 +122,45 @@ function deleteCart(productId) {
 }
 
 
+function addComment(maSach) {
+    let content = document.getElementById('commentId');
+    if (content !== null) {
+        fetch('/api/comments', {
+            method: 'POST',
+            body: JSON.stringify({
+                'ma_sach': maSach,
+                'content': content.value
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 200) { // Changed from 201 to 200 to match your backend
+                let comment = data.comment;
+                let area = document.getElementById('commentArea');
+                area.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-1">
+                            <img src="${comment.user.avatar}" class="img-fluid rounded-circle" alt="demo" />
+                        </div>
+                        <div class="col-md-10">
+                            <p>${comment.content}</p>
+                            <p>${comment.created_date}</p>
+                        </div>
+                    </div>
+                ` + area.innerHTML;
+
+                // Clear the comment input after successful submission
+                content.value = '';
+            } else {
+                alert('Error posting comment');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error posting comment');
+        });
+    }
+}

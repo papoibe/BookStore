@@ -1,4 +1,6 @@
 from datetime import datetime
+from email.policy import default
+from idlelib.multicall import r
 
 from sqlalchemy import (
     Column,
@@ -10,7 +12,7 @@ from sqlalchemy import (
 )
 #Update
 
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from bookstore import app, db
 from enum import Enum as RoleEnum
 from flask_login import UserMixin, current_user
@@ -33,6 +35,7 @@ class ConFigRole(RoleEnum):
     NHAP_KHI_SO_LUONG_CON_IT_NHAT=2
     QUA_HAN=3
 class TheLoai(db.Model):
+    __table_args__ = {'extend_existing': True} #nếu lỗi
     ma_the_loai = Column(Integer, primary_key=True, autoincrement=True)
     ten_the_loai = Column(String(50))
     ma_sach = relationship("Sach", backref="the_loai", lazy=True)
@@ -61,6 +64,7 @@ class Sach(db.Model):
     chi_tiet_phieu_nhap = relationship("ChiTietPhieuNhap", backref="sach")
     chi_tiet_don_hang = relationship("ChiTietDonHang", backref="sach")
     chi_tiet_hoa_don = relationship("ChiTietHoaDon", backref="sach")
+    comments = relationship('Comment', backref ='sach', lazy = True)
 
     def __str__(self):
         return str(self.ma_sach)
@@ -98,6 +102,7 @@ class User(db.Model, UserMixin):
     phieu_nhap_sach = relationship("PhieuNhapSach", backref="user", lazy=True)
     hoa_don = relationship("HoaDon", backref="user")
     don_hang = relationship("DonHang", backref="user")
+    comments = relationship('Comment', backref='user', lazy= True)
 
     def __str__(self):
         return str(self.id)
@@ -174,6 +179,18 @@ class ChiTietHoaDon(db.Model):
     def __str__(self):
         return str(self.ma_hoa_don)
 
+
+class Comment(db.Model):
+    id = Column(Integer, primary_key=True, autoincrement=True)  # Thêm primary key
+    content = Column(String(255), nullable = False)
+    ma_sach = Column(Integer, ForeignKey(Sach.ma_sach), nullable=False)
+    user_id = Column(Integer, ForeignKey(User.id), nullable = False)
+    created_date = Column(DateTime, default=datetime.now())
+
+    def __str__(self):
+        return self.content
+
+
 class ConFig(db.Model):
     id=Column(Integer,primary_key=True,autoincrement=True)
     name=Column(Enum(ConFigRole))
@@ -187,59 +204,59 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
 
-        # import json
-        #
-        # #  --- Add tác giả ----
-        # with open('data/tac_gia.json', encoding='utf-8') as f:
-        #     tac_gia = json.load(f)
-        #     for t in tac_gia :
-        #         tac = TacGia(**t)
-        #         db.session.add(tac)
-        # db.session.commit()
-        #
-        # # --- Add thể loại ---
-        # with open('data/the_loai.json', encoding='utf-8') as f:
-        #     the_loai = json.load(f)
-        #     for t in the_loai :
-        #         the = TheLoai(**t)
-        #         db.session.add(the)
-        # db.session.commit()
-        #
-        # #  ----  Add Sach ---
-        # with open("data/sach.json", encoding="utf-8") as f:
-        #     sach = json.load(f)
-        #     for s in sach:
-        #         sach = Sach(**s)
-        #         db.session.add(sach)
-        # db.session.commit()
-        #
-        # # Add admin
-        # import hashlib
-        #
-        # u = User(username="admin",
-        #              password=str(hashlib.md5("123".encode('utf-8')).hexdigest()),
-        #              name="haunguyen",
-        #              user_role=UserRole.ADMIN)
-        # db.session.add(u)
-        # db.session.commit()
-        #
-        # c1 = ConFig(name=ConFigRole.NHAP_TOI_THIEU, value=10)
-        # c2= ConFig(name=ConFigRole.NHAP_KHI_SO_LUONG_CON_IT_NHAT, value=10)
-        # c3=ConFig(name=ConFigRole.QUA_HAN,value=2)
-        #
-        # db.session.add(c1)
-        # db.session.add(c2)
-        # db.session.add(c3)
-        # db.session.commit()
+        import json
 
-        # d1=DonHang(ma_khach_hang=4,ngay_tao=datetime.now(),trang_thai_thanh_toan=TrangThaiThanhToan.DA_THANH_TOAN)
-        # d2=DonHang(ma_khach_hang=4,ngay_tao=datetime.now(),trang_thai_thanh_toan=TrangThaiThanhToan.DA_DAT)
-        # d3=DonHang(ma_khach_hang=4,ngay_tao=datetime.now(),trang_thai_thanh_toan=TrangThaiThanhToan.HUY)
-        #
-        # db.session.add(d1)
-        # db.session.add(d2)
-        # db.session.add(d3)
-        # db.session.commit()
+        #  --- Add tác giả ----
+        with open('data/tac_gia.json', encoding='utf-8') as f:
+            tac_gia = json.load(f)
+            for t in tac_gia :
+                tac = TacGia(**t)
+                db.session.add(tac)
+        db.session.commit()
+
+        # --- Add thể loại ---
+        with open('data/the_loai.json', encoding='utf-8') as f:
+            the_loai = json.load(f)
+            for t in the_loai :
+                the = TheLoai(**t)
+                db.session.add(the)
+        db.session.commit()
+
+        #  ----  Add Sach ---
+        with open("data/sach.json", encoding="utf-8") as f:
+            sach = json.load(f)
+            for s in sach:
+                sach = Sach(**s)
+                db.session.add(sach)
+        db.session.commit()
+
+        # Add admin
+        import hashlib
+
+        u = User(username="admin",
+                     password=str(hashlib.md5("123".encode('utf-8')).hexdigest()),
+                     name="haunguyen",
+                     user_role=UserRole.ADMIN)
+        db.session.add(u)
+        db.session.commit()
+
+        c1 = ConFig(name=ConFigRole.NHAP_TOI_THIEU, value=10)
+        c2= ConFig(name=ConFigRole.NHAP_KHI_SO_LUONG_CON_IT_NHAT, value=10)
+        c3=ConFig(name=ConFigRole.QUA_HAN,value=2)
+
+        db.session.add(c1)
+        db.session.add(c2)
+        db.session.add(c3)
+        db.session.commit()
+
+        d1=DonHang(ma_khach_hang=4,ngay_tao=datetime.now(),trang_thai_thanh_toan=TrangThaiThanhToan.DA_THANH_TOAN)
+        d2=DonHang(ma_khach_hang=4,ngay_tao=datetime.now(),trang_thai_thanh_toan=TrangThaiThanhToan.DA_DAT)
+        d3=DonHang(ma_khach_hang=4,ngay_tao=datetime.now(),trang_thai_thanh_toan=TrangThaiThanhToan.HUY)
+
+        db.session.add(d1)
+        db.session.add(d2)
+        db.session.add(d3)
+        db.session.commit()
 
         d = DonHang(ma_khach_hang=4, ngay_tao=datetime.now(), trang_thai_thanh_toan=TrangThaiThanhToan.DA_DAT)
         db.session.add(d)

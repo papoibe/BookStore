@@ -106,6 +106,18 @@ def add_chi_tiet_hoa_don(id, ma_sach, so_luong, gia):
 def load_sach_by_id(id):
     return Sach.query.get_or_404(id)
 
+def add_comment(content, ma_sach, user_id):
+    try:
+        c = Comment(content=content.strip(),
+                   ma_sach=ma_sach,
+                   user_id=user_id,
+                   created_date=datetime.now())
+        db.session.add(c)
+        db.session.commit()
+        return c
+    except Exception as e:
+        db.session.rollback()
+        raise e
 
 def stats_sach():
     return db.session.query(TheLoai.ma_the_loai, TheLoai.ten_the_loai, func.count(Sach.ma_sach))\

@@ -284,7 +284,6 @@
         <div class="bottom-buttons no-print">
             <button type="submit">Lập hóa đơn</button>
             <button type="submit" name="action" value="export">Xuất CSV</button>
-            <button type="button" onclick="printInvoice()">In hóa đơn</button>
         </div>
     </form>
 </div>
@@ -382,11 +381,6 @@
     function deleteRow(button) {
         button.closest('tr').remove();
         updateTotalSummary();
-    }
-
-    // Hàm in hóa đơn
-    function printInvoice() {
-        window.print();
     }
 
     // Khởi tạo tổng số lượng và tổng tiền khi trang được tải
