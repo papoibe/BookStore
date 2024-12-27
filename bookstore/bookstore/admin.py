@@ -11,8 +11,12 @@ from  sqlalchemy import func
 class MyAdminIndexView(AdminIndexView):
     @expose("/")
     def index(self):
+        if not current_user.is_authenticated or current_user.user_role != UserRole.ADMIN:
+            return redirect('/login')
         return self.render('admin/index.html',books=dao.stats_sach())
 admin = Admin(app, name="E-commerce Website", template_mode="bootstrap4",index_view=MyAdminIndexView())
+
+
 
 class UserView(ModelView):
     column_list = ["id","username","name","user_role"]
@@ -24,7 +28,6 @@ class UserView(ModelView):
         if form.password.data:
             model.password = hashlib.md5(model.password.encode('utf-8')).hexdigest()
         super(UserView, self).on_model_change(form, model, is_created)
-
 
 class SachView(ModelView):
     column_list = ["ma_sach","ten_sach","gia","so_luong","image","ma_the_loai",
@@ -43,9 +46,11 @@ class TacGiaView(ModelView):
     column_searchable_list = ["ma_tac_gia","ten_tac_gia"]
     form_columns = ["ten_tac_gia"]
 
+
+# xác thực
 class MyView(BaseView):
     def is_accessible(self):
-        return current_user.is_authenticated
+        return current_user.is_authenticated and current_user.user_role==UserRole.ADMIN
 
 class LogoutView(MyView):
     @expose("/")

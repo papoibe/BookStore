@@ -100,6 +100,8 @@ def login_process():
 
 @app.route("/kho", methods=["get", "post"])
 def kho():
+    if not current_user.is_authenticated or current_user.user_role != UserRole.KHO:
+        return redirect('/login')
     err_msg = ""
     success_msg = ""
     ma_sach=[]
@@ -165,6 +167,8 @@ def kho():
 
 @app.route("/tai_quay", methods=["get", "post"])
 def tai_quay():
+    if not current_user.is_authenticated or current_user.user_role != UserRole.TAI_QUAY:
+        return redirect('/login')
     err_msg = ""
     success_msg = ""
     ma_sach=[]
