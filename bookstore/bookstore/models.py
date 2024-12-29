@@ -248,16 +248,3 @@ if __name__ == "__main__":
         db.session.add(c2)
         db.session.add(c3)
         db.session.commit()
-
-        d1=DonHang(ma_khach_hang=4,ngay_tao=datetime.now(),trang_thai_thanh_toan=TrangThaiThanhToan.DA_THANH_TOAN)
-        d2=DonHang(ma_khach_hang=4,ngay_tao=datetime.now(),trang_thai_thanh_toan=TrangThaiThanhToan.DA_DAT)
-        d3=DonHang(ma_khach_hang=4,ngay_tao=datetime.now(),trang_thai_thanh_toan=TrangThaiThanhToan.HUY)
-
-        db.session.add(d1)
-        db.session.add(d2)
-        db.session.add(d3)
-        db.session.commit()
-
-        d = DonHang(ma_khach_hang=4, ngay_tao=datetime.now(), trang_thai_thanh_toan=TrangThaiThanhToan.DA_DAT)
-        db.session.add(d)
-        db.session.commit()

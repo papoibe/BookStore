@@ -1,4 +1,5 @@
 import copy
+import datetime
 import math
 
 from flask import render_template, request, redirect, session, jsonify, abort
@@ -42,6 +43,9 @@ def history():
 
             print("đã hủy")
             huy=dao.get_don_hang_by_id(id)
+            chi_tiet=dao.get_chi_tiet_by_ma_hoa_don(id)
+            for c in chi_tiet:
+                dao.get_sach_by_id(c[0]).cap_nhat_so_luong(int(c[1]))
             huy.update_trang_thai_don(TrangThaiThanhToan.HUY)
 
         data = dao.get_don_hang_by_ma_KH(current_user.id)
@@ -96,35 +100,25 @@ def login_process():
 
 @app.route("/kho", methods=["get", "post"])
 def kho():
+    if not current_user.is_authenticated or current_user.user_role != UserRole.KHO:
+        return redirect('/login')
     err_msg = ""
     success_msg = ""
     ma_sach=[]
     so_luong=[]
     ten_sach=[]
-    date=""
     if request.method == "POST":
         ma_sach = request.form.getlist("book[]")
         so_luong = request.form.getlist("quantity[]")
         ten_sach=request.form.getlist("book_name[]")
-        date = request.form.get("date")
 
         action = request.form.get("action")  # Lấy giá trị action từ form
 
         # Nếu action là "export", thực hiện xuất CSV
         if action == "export":
             data = list(zip(ma_sach, ten_sach, so_luong))
-            return dao.export_csv(data, f"bao_cao_{date}.csv", type="kho")
+            return dao.export_csv(data, f"bao_cao_{datetime.date.today()}.csv", type="kho")
 
-        ## Kiểm tra hợp lệ trước khi nhập
-        if not date:
-            err_msg = "Chưa nhập ngày"
-            return render_template(
-                "kho.html", err_msg=err_msg, success_msg=success_msg,
-                ma_sach=ma_sach,
-                so_luong=so_luong,
-                ten_sach=ten_sach,
-                date=date
-            )
         flag = True
 
         for i in range(len(ma_sach)):
@@ -138,8 +132,7 @@ def kho():
                     "kho.html", err_msg=err_msg, success_msg=success_msg,
                     ma_sach=ma_sach,
                     so_luong=so_luong,
-                    ten_sach=ten_sach,
-                    date=date
+                    ten_sach=ten_sach
                 )
             if sach.get_so_luong() > dao.get_config_by_role(ConFigRole.NHAP_KHI_SO_LUONG_CON_IT_NHAT).value:
                 flag = False
@@ -148,8 +141,7 @@ def kho():
                     "kho.html", err_msg=err_msg, success_msg=success_msg,
                     ma_sach=ma_sach,
                     so_luong=so_luong,
-                    ten_sach=ten_sach,
-                    date=date
+                    ten_sach=ten_sach
                 )
 
         # Nhập sách
@@ -164,18 +156,19 @@ def kho():
                         err_msg=err_msg, success_msg=success_msg,
                            ma_sach=ma_sach,
                            so_luong=so_luong,
-                           ten_sach=ten_sach,
-                           date=date)
-
+                           ten_sach=ten_sach
+                                   )
     return render_template("kho.html",
                         err_msg=err_msg, success_msg=success_msg,
                            ma_sach=ma_sach,
                            so_luong=so_luong,
-                           ten_sach=ten_sach,
-                           date=date)
+                           ten_sach=ten_sach
+                           )
 
 @app.route("/tai_quay", methods=["get", "post"])
 def tai_quay():
+    if not current_user.is_authenticated or current_user.user_role != UserRole.TAI_QUAY:
+        return redirect('/login')
     err_msg = ""
     success_msg = ""
     ma_sach=[]
@@ -183,7 +176,6 @@ def tai_quay():
     so_luong=[]
     gia=[]
     thanh_tien=[]
-    date=""
     totalQuantity=0
     totalAmount=0
     if request.method == "POST":
@@ -199,23 +191,7 @@ def tai_quay():
         action = request.form.get("action")
         if action == "export":
             data = list(zip(ma_sach, ten_sach, so_luong,gia,thanh_tien))
-            return dao.export_csv(data, f"phieu_thanh_toan_{date}.csv", type="tai_quay")
-
-        if not date:
-            err_msg = "Chưa nhập ngày"
-            return render_template(
-                "tai_quay.html",
-                err_msg=err_msg, success_msg=success_msg,
-                ma_sach=ma_sach,
-                so_luong=so_luong,
-                ten_sach=ten_sach,
-                gia=gia,
-                thanh_tien=thanh_tien,
-                date=date,
-                totalQuantity=totalQuantity,
-                totalAmount=totalAmount
-            )
-
+            return dao.export_csv(data, f"phieu_thanh_toan_{datetime.date.today()}.csv", type="tai_quay")
         # vượt quá số lượng sách trong kho
         for i in range(len(ma_sach)):
             sach=dao.get_sach_by_id(ma_sach[i])
@@ -229,7 +205,6 @@ def tai_quay():
                     ten_sach=ten_sach,
                     gia=gia,
                     thanh_tien=thanh_tien,
-                    date=date,
                     totalQuantity=totalQuantity,
                     totalAmount=totalAmount
                 )
@@ -249,7 +224,6 @@ def tai_quay():
                            ten_sach=ten_sach,
                            gia=gia,
                            thanh_tien=thanh_tien,
-                           date=date,
                            totalQuantity=totalQuantity,
                            totalAmount=totalAmount
                            )
