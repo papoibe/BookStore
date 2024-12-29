@@ -147,7 +147,7 @@ def kho():
         # Nhập sách
         if flag == True:
             id = dao.add_phieu_nhap_sach(
-                current_user.get_id(), request.form.get("date")
+                current_user.get_id(), datetime.datetime.now()
             )
             for i in range(len(ma_sach)):
                 dao.add_chi_tiet_phieu_nhap(int(id), ma_sach[i], int(so_luong[i]))
@@ -209,7 +209,7 @@ def tai_quay():
                     totalAmount=totalAmount
                 )
 
-        id = dao.add_hoa_don(current_user.get_id(), date)
+        id = dao.add_hoa_don(current_user.get_id(), datetime.datetime.now())
         for i in range(len(ma_sach)):
             dao.add_chi_tiet_hoa_don(
                 int(id), int(ma_sach[i]), int(so_luong[i]), int(gia[i])
