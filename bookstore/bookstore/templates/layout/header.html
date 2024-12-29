@@ -1,6 +1,9 @@
-<nav class="navbar navbar-expand-sm" style="background-color: #F2F9FF; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
-    <a class="navbar-brand d-flex align-items-center" href="#">
-        <img src="https://res.cloudinary.com/dwmngambu/image/upload/v1735107510/nswa3fbhevj2zrepjz3z.jpg" class="brand-logo">
+<nav class="navbar navbar-expand-sm"
+     style="background-color: #FBFFDC;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="https://res.cloudinary.com/dwmngambu/image/upload/v1735107510/nswa3fbhevj2zrepjz3z.jpg"
+             class="brand-logo">
         <span class="brand-text ms-2">Nhà Sách Hoàng Tử Bé</span>
     </a>
     <button class="navbar-toggler" data-bs-target="#collapsibleNavbar" data-bs-toggle="collapse" type="button">
@@ -13,25 +16,35 @@
                 <input class="form-control me-2" name="q" placeholder="Nhập từ khóa..." type="text">
                 <button class="btn btn-primary" type="submit">Tìm</button>
             </form>
-            {% for c in categories %}
-            <li class="nav-item">
-                <a class="nav-link" href="/?ma_the_loai={{c.ma_the_loai}}">{{c.ten_the_loai}}</a>
-            </li>
-            {% endfor %}
+
+            <div class="dropdown">
+                <button type="button" class="btn btn-primary dropdown-toggle w-100" data-bs-toggle="dropdown">
+                    Danh mục sách
+                </button>
+                <ul class="dropdown-menu">
+                    {% for category in categories %}
+                    <li>
+                        <a class="dropdown-item" href="/?ma_the_loai={{ category.ma_the_loai }}">
+                            {{ category.ten_the_loai }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
         </ul>
 
         {% if current_user.is_authenticated %}
-        <li class="nav-item">
+        <div class="navbar-nav">
             <a class="nav-link text-info" href="/login">
                 <img class="rounded img-fluid" src="{{current_user.avatar}}" width="25">
                 Chào {{current_user.name}}!
             </a>
-        </li>
-        <li class="nav-item">
             <a class="nav-link text-info" href="/logout">
                 &#9940;Đăng xuất
             </a>
-        </li>
+        </div>
+
+
         {% else %}
         <div class="menu d-flex">
             <a class="nav-link text-info" href="/login">&#128100; Đăng nhập</a>
