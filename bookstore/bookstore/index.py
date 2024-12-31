@@ -147,7 +147,8 @@ def kho():
         # Nhập sách
         if flag == True:
             id = dao.add_phieu_nhap_sach(
-                current_user.get_id(), datetime.datetime.now())
+                current_user.get_id(), datetime.datetime.now()
+            )
             for i in range(len(ma_sach)):
                 dao.add_chi_tiet_phieu_nhap(int(id), ma_sach[i], int(so_luong[i]))
             success_msg = "Nhập phiếu thành công!"
@@ -207,6 +208,7 @@ def tai_quay():
                     totalQuantity=totalQuantity,
                     totalAmount=totalAmount
                 )
+
         id = dao.add_hoa_don(current_user.get_id(), datetime.datetime.now())
         for i in range(len(ma_sach)):
             dao.add_chi_tiet_hoa_don(
@@ -335,29 +337,22 @@ def add_to_cart():
     ten_sach = data.get('ten_sach', '')
     gia = data.get('gia')
 
-    # Lấy thông tin số lượng tồn kho
-    sach = dao.get_sach_by_id(ma_sach)
-    so_luong_ton = sach.so_luong if sach else 0
-
     cart = session.get('cart')
     if not cart:
         cart = {}
 
     if ma_sach in cart:
-        # Kiểm tra số lượng trước khi tăng
-        if cart[ma_sach]['quantity'] + 1 > so_luong_ton:
-            return jsonify({'code': 400, 'message': 'Vượt quá số lượng tồn kho'})
         cart[ma_sach]['quantity'] = cart[ma_sach]['quantity'] + 1
     else:
         cart[ma_sach] = {
             'id': ma_sach,
             'name': ten_sach,
             'price': gia,
-            'quantity': 1,
-            'stock': so_luong_ton
+            'quantity': 1
         }
 
     session['cart'] = cart
+
     return jsonify(dao.count_cart(cart))
 
 
@@ -402,45 +397,17 @@ def order():
 @app.route('/update-cart', methods=['POST'])
 def update_cart():
     data = request.get_json()
-    product_id = str(data.get('id'))
-    quantity = int(data.get('quantity'))
+    product_id = data.get('id')
+    quantity = data.get('quantity')
 
-    # Kiểm tra sản phẩm và lấy thông tin
-    sach = dao.get_sach_by_id(product_id)
-    if not sach:
-        return jsonify({
-            'success': False,
-            'message': 'Sản phẩm không tồn tại'
-        })
-
-    # Kiểm tra số lượng
-    if quantity <= 0:
-        return jsonify({
-            'success': False,
-            'message': f'Số lượng sách "{sach.ten_sach}" phải lớn hơn 0'
-        })
-
-    if quantity > sach.so_luong:
-        return jsonify({
-            'success': False,
-            'message': f'Không thể cập nhật! Sách "{sach.ten_sach}" chỉ còn {sach.so_luong} cuốn trong kho'
-        })
-
-    # Cập nhật giỏ hàng
     if 'cart' in session:
         cart = session['cart']
         if product_id in cart:
-            cart[product_id]['quantity'] = quantity
+            cart[product_id]['quantity'] = int(quantity)
             session['cart'] = cart
-            return jsonify({
-                'success': True,
-                'message': f'Đã cập nhật số lượng sách "{sach.ten_sach}"'
-            })
+            return jsonify({'success': True})
 
-    return jsonify({
-        'success': False,
-        'message': f'Không tìm thấy sách "{sach.ten_sach}" trong giỏ hàng'
-    })
+    return jsonify({'success': False})
 
 
 @app.route('/api/delete-cart/<product_id>', methods=['DELETE'])
