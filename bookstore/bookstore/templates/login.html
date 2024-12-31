@@ -5,12 +5,18 @@
 <h1 class="login-title">ĐĂNG NHẬP</h1>
 <div class="form-container">
     <form method="post" class="login100-form validate-form flex-sb flex-w">
-        <a href="https://www.facebook.com/" class="btn-face m-b-20">
-            <p style="font-size:24px" class="fa">&#xf082; Facebook</p>
+        <div class="w-full text-center p-t-55">
+            <span class="txt2">Đăng nhập với</span>
+        </div>
+
+        <a href="https://www.facebook.com/" class="btn-face m-b-20 btn btn-primary">
+            <i class="fa fa-facebook" style="font-size:24px; margin-right:10px;"></i> Facebook
         </a>
-        <a href="mailto:email@example.com" class="btn-google m-b-20">
-            <p style="font-size:24px" class="fa">&#xf1a0; Google</p>
+        <a href="mailto:email@example.com" class="btn-google m-b-20 btn btn-danger">
+            <i class="fa fa-google" style="font-size:24px; margin-right:10px;"></i> Google
         </a>
+
+        <hr>
         <div class="form-floating mb-3 mt-3">
             <input type="text" class="form-control" id="username" placeholder="Nhập tài khoản" name="username"
                    pattern="[A-Za-z0-9]*" required>
@@ -33,11 +39,100 @@
         <div class="form-floating mt-3 mb-3" style="text-align:center">
             <button class="btn btn-success" type="submit">Đăng nhập</button>
         </div>
-
     </form>
 </div>
+<br>
+<br>
+<style>
+    /* CSS LOGIN */
+/* Đặt container của form */
+.form-container {
+    display: flex;
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: center;    /* Căn giữa theo chiều dọc */
+    min-height: 60vh;       /* Chiều cao bằng với chiều cao màn hình */
+    background: linear-gradient(to bottom, #E3F0AF, #5DB996); /* Gradient từ xanh nhạt đến xanh đậm */
+    border-radius: 15px;    /* Góc bo tròn */
+}
+
+/* Kiểu dáng cho form */
+.login100-form {
+    background: linear-gradient(135deg, #C0EBA6, #F4F4F4);
+    padding: 20px 30px;     /* Thêm khoảng cách bên trong */
+    border-radius: 12px;    /* Góc bo tròn */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+    width: 100%;            /* Để thích nghi với kích thước container */
+    max-width: 400px;       /* Giới hạn độ rộng */
+}
+
+/* Kiểu dáng cho nút đăng nhập */
+.btn-face, .btn-google, .btn-success {
+    display: flex;               /* Sử dụng Flexbox */
+    justify-content: center;     /* Căn giữa theo chiều ngang */
+    align-items: center;         /* Căn giữa theo chiều dọc */
+    width: 100%;                 /* Chiều rộng nút */
+    padding: 12px;               /* Khoảng cách bên trong nút */
+    margin-bottom: 15px;         /* Khoảng cách giữa các nút */
+    text-decoration: none;       /* Loại bỏ gạch chân */
+    font-size: 16px;             /* Kích thước chữ */
+    border: 1px solid #ddd;      /* Đường viền */
+    border-radius: 6px;          /* Bo góc */
+    color: linear-gradient(to bottom, #33A1D4, #4CAF50);
+    font-weight: bold;           /* Đậm chữ */
+    transition: all 0.3s ease;   /* Hiệu ứng chuyển đổi mượt */
+}
+
+/* Nút Facebook */
+.btn-face {
+    background-color: #3b5998;   /* Màu nền Facebook */
+}
+
+/* Nút Google */
+.btn-google {
+    background-color: #db4437;   /* Màu nền Google */
+}
+
+/* Nút Đăng nhập */
+.btn-success {
+    background-color: #4caf50;   /* Màu nền xanh lá cây */
+}
+
+/* Hiệu ứng khi hover */
+.btn-face:hover, .btn-google:hover, .btn-success:hover {
+    opacity: 0.9;                /* Hiệu ứng khi hover */
+    transform: scale(1.05);      /* Phóng to nhẹ khi hover */
+}
+
+/* Thêm icon vào nút */
+.fa {
+    margin-left: 10px;           /* Khoảng cách giữa icon và chữ */
+}
+
+/* Kiểu dáng cho tiêu đề ĐĂNG NHẬP */
+.login-title {
+    font-size: 36px;              /* Kích thước chữ lớn */
+    font-weight: bold;            /* Tăng độ đậm */
+    background: linear-gradient(to right, #00FF9C, #B6FFA1); /* Gradient từ vàng cam đến vàng nhạt */
+    -webkit-background-clip: text; /* Áp dụng gradient cho chữ */
+    color: transparent;           /* Chữ có màu trong suốt để gradient hiển thị */
+    text-align: center;           /* Căn giữa chữ */
+    text-transform: uppercase;    /* Chuyển thành chữ in hoa */
+    margin-top: 20px;             /* Khoảng cách phía trên */
+    margin-bottom: 20px;          /* Khoảng cách phía dưới */
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3); /* Hiệu ứng đổ bóng nhẹ */
+    font-family: 'Roboto', sans-serif; /* Font hiện đại */
+}
+
+/* Hiệu ứng khi hover tiêu đề */
+.login-title:hover {
+    color: #00FF9C;               /* Màu xanh đậm hơn khi hover */
+    transform: scale(1.1);        /* Phóng to nhẹ chữ khi hover */
+    transition: all 0.3s ease;    /* Hiệu ứng mượt khi hover */
+}
+</style>
 {%endblock%}
 {% block title %}
 Đăng nhập
 {% endblock %}
+
 

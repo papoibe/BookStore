@@ -1,21 +1,32 @@
 {% extends 'layout/base.html' %}
 
+{# Phần header với thanh điều hướng #}
 {% block header %}
 <nav class="navbar navbar-expand-sm" style="background-color: #F2F9FF; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+    {# Logo và tên thương hiệu #}
     <a class="navbar-brand d-flex align-items-center" href="/">
         <img src="https://res.cloudinary.com/dwmngambu/image/upload/v1735107510/nswa3fbhevj2zrepjz3z.jpg" class="brand-logo">
         <span class="brand-text ms-2">Nhà Sách Hoàng Tử Bé</span>
     </a>
+
+    {# Nút toggle cho mobile #}
     <button class="navbar-toggler" data-bs-target="#collapsibleNavbar" data-bs-toggle="collapse" type="button">
         <span class="navbar-toggler-icon"></span>
     </button>
+
+    {# Menu chính #}
     <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav me-auto">
-            <a class="nav-link active" href="/">Trang chủ</a>
+            {# Link trang chủ #}
+            <a class="nav-link active custom-link" href="/">Trang chủ</a>
+
+            {# Form tìm kiếm #}
             <form class="d-flex">
                 <input class="form-control me-2" name="q" placeholder="Nhập từ khóa..." type="text">
                 <button class="btn btn-primary" type="submit">Tìm</button>
             </form>
+
+            {# Dropdown danh mục sách #}
             <div class="dropdown">
                 <button type="button" class="btn btn-primary dropdown-toggle w-100" data-bs-toggle="dropdown">
                     Danh mục sách
@@ -32,6 +43,7 @@
             </div>
         </ul>
 
+        {# Links lịch sử và giỏ hàng #}
         <div class="navbar-nav d-flex align-items-center">
             <a class="nav-link text-success" href="/history" style="margin-right: 10px;">
                 <i class="fas fa-history" style="margin-right: 5px;"></i>Lịch sử đặt hàng</a>
@@ -39,11 +51,12 @@
                 <i class="fas fa-shopping-cart"></i>
                 Giỏ hàng
                 <span class="badge badge-info" id="cartCounter" style="color: orange">
-            {{ cart_stats.total_quantity }}
-        </span>
+                    {{ cart_stats.total_quantity }}
+                </span>
             </a>
         </div>
 
+        {# Menu người dùng #}
         {% if current_user.is_authenticated %}
         <div class="navbar-nav">
             <a class="nav-link text-info" href="/login">
@@ -61,46 +74,163 @@
         </div>
         {% endif %}
     </div>
-    </div>
 </nav>
 {% endblock %}
+
 {% block title %}
 Lịch sử đặt hàng
 {% endblock %}
+
 {% block content %}
+<style>
+    /* Container chính */
+    .history-container {
+        margin: 40px auto;
+        max-width: 1200px;
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
 
-<br>
-<h1 class="text-center text-danger">LỊCH SỬ ĐẶT HÀNG</h1>
+    /* Tiêu đề trang */
+    .history-title {
+        color: #2C3E50;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2.5em;
+        font-weight: bold;
+    }
 
-<table class="table">
-    <tr>
-        <th>Mã đơn hàng</th>
-        <th>Ngày đặt hàng</th>
-        <th>Trạng thái đơn hàng</th>
-    </tr>
-    {% for d in data %}
-    <tr>
-        <td>{{ d[0] }}</td>
-        <td>{{ d[1] }}</td>
-        <td>
-            {{ d[2].name }}
+    /* Bảng lịch sử đơn hàng */
+    .history-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-bottom: 30px;
+    }
 
-        {% if d[2].value==2 %}
-            <form method="POST">
-                <input type="hidden" name="order_id" value="{{ d[0] }}">
-                <button type="submit" name="action" value="Pay" class="btn btn-info">Thanh Toán</button>
+    .history-table th {
+        background: #4CAF50;
+        color: white;
+        padding: 15px;
+        font-weight: 500;
+        text-align: left;
+        border-radius: 5px 5px 0 0;
+    }
 
+    .history-table td {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+    }
 
-                <input type="hidden" name="order_id" value="{{ d[0] }}">
-                <button type="submit" name="action" value="Cancel" class="btn btn-danger">Hủy đơn</button>
-            </form>
+    .history-table tr:last-child td {
+        border-bottom: none;
+    }
 
-        {% endif %}
-        </td>
+    .history-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
 
-    </tr>
-    {% endfor %}
-</table>
+    /* Nút thanh toán và hủy đơn */
+    .btn-payment {
+        background-color: #17a2b8;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        margin-right: 10px;
+        transition: all 0.3s ease;
+    }
 
+    .btn-cancel {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
 
+    .btn-payment:hover, .btn-cancel:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* Responsive cho màn hình nhỏ */
+    @media (max-width: 768px) {
+        .history-container {
+            padding: 15px;
+            margin: 20px 10px;
+        }
+
+        .history-title {
+            font-size: 2em;
+        }
+
+        .history-table {
+            display: block;
+            overflow-x: auto;
+        }
+    }
+</style>
+
+<div class="history-container">
+    <h1 class="history-title">Lịch sử đặt hàng</h1>
+
+    <table class="history-table">
+        <thead>
+            <tr>
+                <th>Mã đơn hàng</th>
+                <th>Ngày đặt hàng</th>
+                <th>Trạng thái đơn hàng</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in data %}
+            <tr>
+                <td>{{ d[0] }}</td>
+                <td>{{ d[1] }}</td>
+                <td>{{ d[2].name }}</td>
+                <td>
+                    {% if d[2].value==2 %}
+                    <form method="POST" data-order="{{ d[0] }}">
+                        <input type="hidden" name="order_id" value="{{ d[0] }}">
+                        <button type="submit" name="action" value="Pay" class="btn btn-payment">
+                            <i class="fas fa-credit-card"></i> Thanh toán
+                        </button>
+                        <button type="submit" name="action" value="Cancel" class="btn btn-cancel" onclick="return confirmCancel()">
+                            <i class="fas fa-times"></i> Hủy đơn
+                        </button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+// Xác nhận hủy đơn hàng
+function confirmCancel() {
+    return confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?');
+}
+
+// Xử lý hủy đơn và xóa giỏ hàng
+function cancelOrder(orderId) {
+    if(confirm('Bạn có chắc muốn hủy đơn hàng này?')) {
+        document.querySelector(`form[data-order="${orderId}"]`).submit();
+        sessionStorage.removeItem('cart');
+    }
+}
+
+// Hiển thị thông báo kết quả
+function showNotification(message, isSuccess) {
+    // Thêm code hiển thị thông báo tùy theo thiết kế
+    alert(message);
+}
+</script>
 {% endblock %}

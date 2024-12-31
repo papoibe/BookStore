@@ -1,17 +1,12 @@
-*{
-    font-family: tahoma
-}
-
-body{
-    background-color: white
-}
-
+/* Reset CSS cơ bản */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: tahoma;
 }
 
+/* Thiết lập cơ bản cho body và html */
 body, html {
     height: 100%;
     display: flex;
@@ -19,355 +14,22 @@ body, html {
     background-color: white;
 }
 
+/* Phần nội dung chính */
 .content {
-    flex: 1; /* Chiếm toàn bộ khoảng trống giữa đầu trang và footer */
+    flex: 1; /* Chiếm toàn bộ không gian còn lại */
     text-align: center;
     padding: 20px;
 }
 
-/* Footer */
-footer {
-    background-color: #ECEBDE;
-    color: #666666;
-    padding: 20px 0;
-    text-align: left;
-    margin-top: auto; /* Đẩy footer xuống cuối trang */
+/* Thanh điều hướng (Navbar) */
+.navbar {
+    border-bottom: 2px solid #ddd;
+    padding: 10px 20px;
+    background-color: #F2F9FF;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-footer .footer-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start; /* Căn các phần tử theo phía trên */
-    padding: 0 10%;
-    flex-wrap: wrap;
-}
-
-footer .footer-container > div {
-    flex: 1; /* Mỗi cột sẽ có cùng chiều rộng */
-    text-align: left; /* Căn các phần tử bên trong các cột sang trái */
-    padding: 10px; /* Thêm một chút khoảng cách cho các cột */
-}
-
-.footer-social-link-container {
-    display: flex;  /* Đặt các thẻ <a> trong một hàng */
-    justify-content: flex-start; /* Căn chỉnh các thẻ về phía trái */
-    align-items: center; /* Căn giữa các thẻ theo chiều dọc */
-    gap: 15px;  /* Khoảng cách giữa các thẻ */
-}
-
-.footer-social-link {
-    color: black;
-    text-decoration: none;
-    font-size: 16px;
-    display: flex;  /* Đảm bảo hình ảnh và văn bản căn chỉnh ngang */
-    align-items: center; /* Căn giữa hình ảnh và văn bản theo chiều dọc */
-    gap: 10px;  /* Khoảng cách giữa hình ảnh và văn bản */
-}
-
-.footer-social-link img {
-    height: 30px; /* Chiều cao hình ảnh */
-    object-fit: contain;  /* Giữ tỷ lệ của hình ảnh */
-    margin-right: 10px;  /* Khoảng cách giữa hình ảnh và văn bản */
-}
-
-
-footer img {
-    width: 50px; /* Đặt chiều rộng cố định */
-    height: 50px; /* Đặt chiều cao cố định */
-    object-fit: contain; /* Đảm bảo hình ảnh giữ đúng tỷ lệ */
-    margin: 5px; /* Khoảng cách giữa các hình */
-}
-
-footer img[alt="gmail"] {
-    width: 35px; /* Giảm chiều rộng */
-    height: 35px; /* Giảm chiều cao */
-}
-
-footer img.bo-cong-thuong {
-    width: 150px;
-    height: auto;
-    margin-top: 10px;
-}
-
-footer .footer-text {
-    margin-top: 20px;
-}
-
-footer .footer-text h1 {
-    margin: 0;
-    font-size: 34px;
-}
-
-footer .footer-text p {
-    margin: 5px 0;
-}
-
-footer .footer_pay {
-    width: 200px;
-}
-
-footer .row a {
-    text-decoration: none;
-    display: block;
-    color: black;
-    transition: 0.3s;
-    padding-bottom: 5px;
-    font-size: 14px;
-}
-
-footer .row a:hover {
-    color:  #F5A623;
-}
-
-/* Định dạng phần footer dưới cùng */
-.footer-bottom {
-    margin-top: 5px;
-    text-align: center; /* Căn giữa nội dung */
-    padding-top: 10px;
-}
-
-.footer-title {
-    margin: 0;
-    font-size: 34px; /* Kích thước lớn cho tiêu đề */
-    font-weight: bold; /* Làm nổi bật tiêu đề */
-}
-
-.footer-copyright {
-    margin: 5px 0;
-    font-size: 14px; /* Kích thước nhỏ hơn để phù hợp với thông tin bản quyền */
-    color: #555; /* Tông màu dịu để không lấn át tiêu đề */
-}
-
-.footer-divider {
-    border: 0; /*  loại bỏ đường viền mặc định*/
-    height: 10px; /* độ dày */
-    background: #ccc;
-    width: auto;
-    margin: 0 auto 10px auto;
-}
-
-@media (max-width:767px){
-    .footer-container {
-        padding: 0 5%; /* Giảm padding cho màn hình nhỏ */
-    }
-
-    .footer-social-link {
-        font-size: 14px; /* Giảm kích thước chữ */
-        margin-right: 10px;
-    }
-
-    footer img {
-        max-width: 40px; /* Giảm kích thước hình ảnh trên màn hình nhỏ */
-        height: 40px;
-    }
-
-    footer .footer-text h1 {
-        font-size: 28px; /* Giảm kích thước tiêu đề */
-    }
-
-    footer .footer-text p {
-        font-size: 12px; /* Giảm kích thước chữ cho văn bản */
-    }
-}
-
-.container-fuild{
-    margin-top: 80px;
-}
-
-
-/* Chỉnh sửa kiểu dáng cho các thẻ h3 */
-.footer_intro h3, .footer_support h3, .footer_links h3, .footer_pay h3 {
-    font-size: 1.25rem; /* Kích thước chữ */
-    font-weight: bold; /* Đậm */
-    text-transform: uppercase; /* Viết hoa tất cả */
-    color: #333; /* Màu chữ */
-    margin-bottom: 15px; /* Khoảng cách dưới thẻ h3 */
-    letter-spacing: 1px; /* Khoảng cách giữa các chữ cái */
-    text-align: left; /* Căn trái cho dễ nhìn */
-}
-
-/* Đảm bảo các thẻ h3 có phong cách giống nhau */
-.footer_intro h3,
-.footer_support h3,
-.footer_links h3,
-.footer_pay h3 {
-    font-family: 'Arial', sans-serif; /* Font chữ đồng nhất */
-}
-
-/* Thêm một chút cách điệu cho các thẻ h3 */
-.footer_intro h3,
-.footer_support h3,
-.footer_links h3,
-.footer_pay h3 {
-    border-bottom: 2px solid #4CAF50; /* Thêm gạch dưới màu xanh lá */
-    padding-bottom: 5px; /* Khoảng cách giữa chữ và đường gạch dưới */
-    margin-bottom: 10px; /* Khoảng cách dưới mỗi thẻ h3 */
-    display: inline-block; /* Cho phép gạch dưới kéo dài theo chiều rộng nội dung */
-    width: 100%;
-}
-
-.footer .container {
-    max-width: 1140px; /* Đặt chiều rộng tối đa cho container */
-}
-
-.footer .row {
-    justify-content: space-between; /* Căn đều khoảng cách giữa các cột */
-}
-
-.footer .col-md-3 {
-    flex: 0 0 calc(25% - 10px); /* Căn chỉnh kích thước cột cho vừa đủ */
-    max-width: calc(25% - 10px); /* Đảm bảo không vượt kích thước */
-    padding: 10px; /* Giảm padding để tiết kiệm không gian */
-}
-
-.footer_intro, .footer_support, .footer_links, .footer_pay {
-    margin-bottom: 0; /* Loại bỏ khoảng trống thừa bên dưới */
-    text-align: left; /* Căn trái nội dung cho đồng nhất */
-}
-
-/* Điều chỉnh tiêu đề "Phương thức thanh toán" không xuống dòng */
-.footer_pay h3 {
-    font-size: 1.25rem; /* Kích thước chữ */
-    font-weight: bold;
-    text-transform: uppercase;
-    color: #333;
-    margin-bottom: 15px;
-    letter-spacing: 1px;
-    text-align: left;
-    white-space: nowrap; /* Ngăn tiêu đề xuống dòng */
-}
-
-/* Điều chỉnh chiều rộng của cột chứa "Phương thức thanh toán" nếu cần */
-.footer .col-md-3 {
-    flex: 0 0 calc(25% - 10px);
-    max-width: calc(25% - 10px);
-    padding: 10px;
-    word-wrap: break-word; /* Nếu cần để đảm bảo chữ không bị cắt */
-}
-
-/* Giảm padding của các phần tử trong footer */
-.footer {
-    padding: 10px 0; /* Giảm padding trên và dưới */
-}
-
-/* Giảm chiều cao các cột trong footer */
-.footer .col-md-3, .footer .col-xs-6 {
-    padding: 5px; /* Giảm padding của các cột */
-}
-
-/* Căn chỉnh tiêu đề và các phần tử */
-.footer_intro h3,
-.footer_support h3,
-.footer_links h3,
-.footer_pay h3 {
-    font-size: 1.1rem; /* Giảm kích thước chữ */
-    margin-bottom: 10px; /* Khoảng cách dưới tiêu đề */
-}
-
-/* Giảm kích thước hình ảnh trong footer */
-.footer_pay img {
-    max-width: 80%; /* Giảm chiều rộng hình ảnh */
-    height: auto; /* Giữ tỷ lệ chiều cao */
-    margin-bottom: 8px; /* Giảm khoảng cách giữa các hình ảnh */
-}
-
-/* Đảm bảo footer-bottom không chiếm quá nhiều không gian */
-.footer-bottom {
-    padding: 5px 0; /* Giảm padding trên và dưới */
-}
-
-/* Điều chỉnh chiều cao các phần tử trong footer-bottom */
-.footer-title {
-    font-size: 1.2rem; /* Giảm kích thước tiêu đề */
-    margin: 5px 0; /* Khoảng cách trên và dưới tiêu đề */
-}
-
-.footer-copyright {
-    font-size: 0.9rem; /* Giảm kích thước chữ bản quyền */
-    margin: 5px 0; /* Khoảng cách trên và dưới bản quyền */
-}
-
-
-
-
-
-
-
-
-
-/* Đặt container của form */
-.form-container {
-    display: flex;
-    justify-content: center; /* Căn giữa theo chiều ngang */
-    align-items: center;    /* Căn giữa theo chiều dọc */
-    min-height: 60vh;      /* Chiều cao bằng với chiều cao màn hình */
-    background-color: #f3f4f6; /* Tùy chỉnh nền */
-}
-
-/* Kiểu dáng cho form */
-.login100-form {
-    background: #ffffff;   /* Màu nền trắng */
-    padding: 20px 30px;    /* Thêm khoảng cách bên trong */
-    border-radius: 10px;   /* Góc bo tròn */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Hiệu ứng đổ bóng */
-    width: 100%;           /* Để thích nghi với kích thước container */
-    max-width: 400px;      /* Giới hạn độ rộng */
-}
-
-.btn-face, .btn-google {
-    display: flex;               /* Sử dụng Flexbox */
-    justify-content: center;     /* Căn giữa theo chiều ngang */
-    align-items: center;         /* Căn giữa theo chiều dọc */
-    width: 100%;                 /* Chiều rộng nút */
-    padding: 10px;               /* Khoảng cách bên trong nút */
-    margin-bottom: 15px;         /* Khoảng cách giữa các nút */
-    text-decoration: none;       /* Loại bỏ gạch chân */
-    font-size: 16px;             /* Kích thước chữ */
-    border: 1px solid #ddd;      /* Đường viền */
-    border-radius: 5px;          /* Bo góc */
-    color: #ffffff;              /* Màu chữ */
-}
-
-
-
-.btn-face {
-    background-color: #3b5998;   /* Màu nền Facebook */
-}
-
-.btn-google {
-    background-color: #db4437;   /* Màu nền Google */
-}
-
-.btn-face:hover, .btn-google:hover {
-    opacity: 0.9;                /* Hiệu ứng khi hover */
-}
-
-.fa {
-    margin-left: 10px;           /* Khoảng cách giữa icon và chữ */
-}
-
-/* Kiểu dáng cho tiêu đề ĐĂNG NHẬP */
-.login-title {
-    font-size: 36px;              /* Kích thước chữ lớn */
-    font-weight: bold;            /* Tăng độ đậm */
-    color: #CB9DF0;               /* Màu xanh nhạt (Bootstrap text-info) */
-    text-align: center;           /* Căn giữa chữ */
-    text-transform: uppercase;    /* Chuyển thành chữ in hoa */
-    margin-top: 20px;             /* Khoảng cách phía trên */
-    margin-bottom: 20px;          /* Khoảng cách phía dưới */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Hiệu ứng đổ bóng nhẹ */
-    font-family: 'Poppins', sans-serif; /* Font hiện đại */
-}
-
-/* Hiệu ứng khi hover */
-.login-title:hover {
-    color: #0056b3;               /* Màu xanh đậm hơn khi hover */
-    transform: scale(1.05);       /* Phóng to nhẹ chữ khi hover */
-    transition: all 0.3s ease;    /* Hiệu ứng mượt khi hover */
-}
-
-
-/* Logo và văn bản */
+/* Logo và tên thương hiệu */
 .navbar-brand {
     display: flex;
     align-items: center;
@@ -376,62 +38,44 @@ footer .row a:hover {
     font-weight: bold;
 }
 
-/* Căn chỉnh logo */
+/* Hình logo */
 .brand-logo {
-    height: 30px; /* Kích thước nhỏ hơn */
-    border-radius: 5px; /* Góc bo tròn */
-    transition: transform 0.3s ease; /* Hiệu ứng hover */
+    height: 30px;
+    border-radius: 5px;
+    transition: transform 0.3s ease; /* Hiệu ứng hover mượt */
 }
 
-/* Văn bản bên cạnh logo */
+/* Chữ bên cạnh logo */
 .brand-text {
     font-family: 'Arial', sans-serif;
-    font-size: 1.2rem; /* Kích thước chữ */
-    color: #555; /* Màu chữ */
-    margin-left: 10px; /* Khoảng cách giữa logo và chữ */
+    font-size: 1.2rem;
+    color: #555;
+    margin-left: 10px;
 }
 
-/* Hover logo và chữ */
+/* Hiệu ứng hover cho logo */
 .navbar-brand:hover .brand-logo {
-    transform: scale(1.1); /* Logo phóng to khi hover */
+    transform: scale(1.1); /* Phóng to logo khi hover */
 }
 
-
-/* Hover ảnh sách */
 .navbar-brand:hover .brand-text {
-    color: gray; /* Màu chữ thay đổi khi hover */
+    color: gray;
 }
 
-
-.card-img-top {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .card-img-top:hover {
-        transform: translateY(-10px); /* Đưa hình lên trên 10px */
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Hiệu ứng bóng */
-    }
-
-
-/* Navbar styling */
-.navbar {
-    border-bottom: 2px solid #ddd;
-    padding: 10px 20px;
-}
-
-/* Đảm bảo các thẻ a trong navbar không xuống dòng */
+/* Các liên kết trong navbar */
 .navbar .nav-link {
-    display: inline-block; /* Đảm bảo các thẻ a không bị ngắt dòng */
-    white-space: nowrap; /* Ngăn chặn việc xuống dòng */
-    margin-right: 10px; /* Giữa các phần tử một khoảng cách */
+    display: inline-block;
+    white-space: nowrap; /* Ngăn text xuống dòng */
+    margin-right: 10px;
 }
 
-/* Đảm bảo các button trong navbar không xuống dòng */
+/* Nút trong navbar */
 .navbar .btn {
     display: inline-block;
     white-space: nowrap;
 }
 
+/* Ô tìm kiếm */
 .navbar .form-control {
     border-radius: 20px;
     padding: 10px;
@@ -440,20 +84,14 @@ footer .row a:hover {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Adjust dropdown button to align with search field */
+/* Menu dropdown */
 .navbar .dropdown {
     margin-left: 20px;
 }
 
-/* Ensure proper spacing between navbar items */
-.navbar-nav {
-    margin-left: auto;
-    align-items: center;
-}
-
-/* Đảm bảo nút Tìm kiếm giống như nút Danh mục sách */
+/* Nút chính trong navbar */
 .navbar .btn-primary {
-    background-color: #00FF9C; /* Màu nền giống nút danh mục sách */
+    background-color: #00FF9C;
     border: none;
     padding: 10px;
     width: 100px;
@@ -461,101 +99,83 @@ footer .row a:hover {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease;
     border-radius: 10px;
+    font-weight: bold;
 }
 
-/* Hiệu ứng hover cho nút tìm kiếm */
+/* Hiệu ứng hover cho nút chính */
 .navbar .btn-primary:hover {
-    background-color: #0056b3; /* Màu nền khi hover giống nút danh mục */
+    background-color: #0056b3;
     cursor: pointer;
 }
 
-
-
-
-/* Đảm bảo hoa mai rơi vào vị trí chính xác */
-.flower {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    background-image: url('https://res.cloudinary.com/drutbrdge/image/upload/v1735299570/dd2d810b52f621fc1a9ddc358958d16b_zpvsci.jpg');
-    background-size: cover;
-    background-position: center;
-    border-radius: 50%;
-    animation: fall 5s linear infinite, rotate 5s linear infinite;
+/* Nhóm các item trong navbar */
+.navbar-nav {
+    margin-left: auto;
+    align-items: center;
 }
 
-.flower:nth-child(1) {
-    top: -10%;
-    left: 20%;
-    animation-delay: 0s;
-}
-
-.flower:nth-child(2) {
-    top: -10%;
-    left: 40%;
-    animation-delay: 1s;
-}
-
-.flower:nth-child(3) {
-    top: -10%;
-    left: 60%;
-    animation-delay: 2s;
-}
-
-.flower:nth-child(4) {
-    top: -10%;
-    left: 80%;
-    animation-delay: 3s;
-}
-
-.flower:nth-child(5) {
-    top: -10%;
-    left: 90%;
-    animation-delay: 4s;
-}
-
-@keyframes fall {
-    0% {
-        transform: translateY(0) rotate(0deg);
-    }
-    100% {
-        transform: translateY(100vh) rotate(360deg);
-    }
-}
-
-@keyframes rotate {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
+/* Liên kết thông tin trong navbar */
 .navbar-nav .nav-link.text-info {
     display: inline-flex;
     align-items: right;
-    margin-right: 10px; /* Điều chỉnh khoảng cách giữa các phần tử */
+    margin-right: 10px;
 }
 
+/* Hình ảnh trong liên kết navbar */
 .navbar-nav .nav-link img {
-    margin-right: 5px; /* Điều chỉnh khoảng cách giữa hình ảnh và tên */
+    margin-right: 5px;
 }
 
+/* Menu dropdown và hiệu ứng */
+.dropdown:hover .dropdown-menu,
+.dropdown-menu:hover {
+    display: block !important;
+    opacity: 1;
+}
 
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateY(-10px);
+    opacity: 0;
+}
+
+/* Hiệu ứng khi hover dropdown */
+.dropdown:hover .dropdown-menu {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Badge số lượng giỏ hàng */
+#cartCounter {
+    background-color: #FFEBD8;
+    color: #fff;
+    border-radius: 50%;
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Carousel (Slideshow) */
 #carouselExample {
-    height: 400px; /* Điều chỉnh chiều cao của carousel */
+    height: 400px;
 }
 
 .carousel-item img {
-    object-fit: cover; /* Đảm bảo hình ảnh phủ kín mà không bị méo */
-    height: 100%; /* Chiều cao của hình ảnh sẽ chiếm toàn bộ chiều cao của slide */
-    width: 100%; /* Đảm bảo chiều rộng của hình ảnh chiếm toàn bộ chiều rộng */
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
 }
 
+/* Điểm chấm điều hướng carousel */
 .dot-container {
     position: absolute;
-    bottom: 10px; /* Đặt vị trí của các chấm chấm */
+    bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -577,6 +197,236 @@ footer .row a:hover {
     background-color: white;
 }
 
+/* Phần form đăng nhập/đăng ký */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    background-color: #f3f4f6;
+}
 
+/* Form đăng nhập */
+.login100-form {
+    background: #ffffff;
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+}
 
+/* Tiêu đề form đăng nhập */
+.login-title {
+    font-size: 36px;
+    font-weight: bold;
+    color: #CB9DF0;
+    text-align: center;
+    text-transform: uppercase;
+    margin: 20px 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    font-family: 'Poppins', sans-serif;
+}
 
+/* Hiệu ứng hover cho tiêu đề đăng nhập */
+.login-title:hover {
+    color: #0056b3;
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+}
+
+/* Nút đăng nhập mạng xã hội */
+.btn-face,
+.btn-google {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    text-decoration: none;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    color: #ffffff;
+}
+
+.btn-face {
+    background-color: #3b5998; /* Màu Facebook */
+}
+
+.btn-google {
+    background-color: #db4437; /* Màu Google */
+}
+
+/* Hiệu ứng hover cho nút mạng xã hội */
+.btn-face:hover,
+.btn-google:hover {
+    opacity: 0.9;
+}
+
+/* Footer (Chân trang) */
+footer {
+    background-color: #ECEBDE;
+    color: #666666;
+    padding: 20px 0;
+    text-align: left;
+    margin-top: auto;
+}
+
+/* Container footer */
+footer .footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0 10%;
+    flex-wrap: wrap;
+}
+
+footer .footer-container > div {
+    flex: 1;
+    text-align: left;
+    padding: 10px;
+}
+
+/* Container liên kết mạng xã hội trong footer */
+.footer-social-link-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Liên kết mạng xã hội */
+.footer-social-link {
+    color: black;
+    text-decoration: none;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Hình ảnh trong footer */
+footer img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin: 5px;
+}
+
+/* Logo Gmail trong footer */
+footer img[alt="gmail"] {
+    width: 35px;
+    height: 35px;
+}
+
+/* Logo Bộ Công Thương */
+footer img.bo-cong-thuong {
+    width: 150px;
+    height: auto;
+    margin-top: 10px;
+}
+
+/* Liên kết trong footer */
+footer .row a {
+    text-decoration: none;
+    display: block;
+    color: black;
+    transition: 0.3s;
+    padding-bottom: 5px;
+    font-size: 14px;
+}
+
+footer .row a:hover {
+    color: #F5A623;
+}
+
+/* Phần cuối footer */
+.footer-bottom {
+    margin-top: 5px;
+    text-align: center;
+    padding-top: 10px;
+}
+
+/* Tiêu đề footer */
+.footer-title {
+    margin: 0;
+    font-size: 34px;
+    font-weight: bold;
+}
+
+/* Copyright footer */
+.footer-copyright {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+/* Đường phân cách trong footer */
+.footer-divider {
+    border: 0;
+    height: 10px;
+    background: #ccc;
+    width: auto;
+    margin: 0 auto 10px auto;
+}
+
+/* Tiêu đề các phần trong footer */
+.footer_intro h3,
+.footer_support h3,
+.footer_links h3,
+.footer_pay h3 {
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #333;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    text-align: left;
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 5px;
+    display: inline-block;
+    width: 100%;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Hiệu ứng cho hình ảnh sản phẩm */
+.card-img-top {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-img-top:hover {
+    transform: translateY(-10px); /* Nâng hình lên khi hover */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 767px) {
+    /* Điều chỉnh padding container footer */
+    .footer-container {
+        padding: 0 5%;
+    }
+
+    /* Giảm kích thước chữ liên kết mạng xã hội */
+    .footer-social-link {
+        font-size: 14px;
+        margin-right: 10px;
+    }
+
+    /* Giảm kích thước hình ảnh footer */
+    footer img {
+        max-width: 40px;
+        height: 40px;
+    }
+
+    /* Điều chỉnh kích thước tiêu đề footer */
+    footer .footer-text h1 {
+        font-size: 28px;
+    }
+
+    /* Điều chỉnh kích thước text footer */
+    footer .footer-text p {
+        font-size: 12px;
+    }
+}

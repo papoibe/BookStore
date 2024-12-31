@@ -17,18 +17,17 @@
                 <input class="form-control me-2" name="q" placeholder="Nhập từ khóa..." type="text">
                 <button class="btn btn-primary" type="submit">Tìm</button>
             </form>
-
         </ul>
 
         <div class="navbar-nav d-flex align-items-center">
             <a class="nav-link text-success btn" href="/history" style="margin-right: 10px;">
                 <i class="fas fa-history" style="margin-right: 5px;"></i>Lịch sử đặt hàng</a>
-            <a class="nav-link text-success btn " href="{{ url_for('cart') }}">
+            <a class="nav-link text-success btn" href="{{ url_for('cart') }}">
                 <i class="fas fa-shopping-cart"></i>
                 Giỏ hàng
                 <span class="badge badge-info" id="cartCounter" style="color: orange">
-            {{ cart_stats.total_quantity }}
-        </span>
+                    {{ cart_stats.total_quantity }}
+                </span>
             </a>
         </div>
 
@@ -42,7 +41,6 @@
                 &#9940;Đăng xuất
             </a>
         </div>
-
         {% else %}
         <div class="menu d-flex">
             <a class="nav-link text-info" href="/login">&#128100; Đăng nhập</a>
@@ -50,124 +48,245 @@
         </div>
         {% endif %}
     </div>
-    </div>
 </nav>
 {% endblock %}
 
 {% block title %}Chi tiết sản phẩm{% endblock %}
 
 {% block content %}
+<style>
+    .product-image {
+        transition: transform 0.3s ease;
+        max-height: 400px;
+        object-fit: contain;
+    }
+
+    .product-image:hover {
+        transform: scale(1.05);
+    }
+
+    .stock-warning {
+        color: #856404;
+        background-color: #fff3cd;
+        border: 1px solid #ffeeba;
+        padding: 0.75rem;
+        border-radius: 0.25rem;
+        margin-top: 1rem;
+    }
+
+    .comment-section {
+        margin-top: 2rem;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 0.5rem;
+    }
+
+    .comment-input {
+        margin-bottom: 1rem;
+    }
+
+    .comment-item {
+        border-bottom: 1px solid #dee2e6;
+        padding: 1rem 0;
+    }
+
+    .comment-avatar {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+    }
+</style>
+
 <div class="container">
     <div class="row">
-        <!-- Categories Sidebar -->
-        <div class="col-md-3">
-            <h3 class="my-4">Danh mục sách</h3>
-            <div class="list-group">
-                {% for category in categories %}
-                {% if category.ma_the_loai == sach.ma_the_loai %}
-                <a href="{{ url_for('index', ma_the_loai=category.ma_the_loai) }}" class="list-group-item active">
-                    {{ category.ten_the_loai }}
-                </a>
-                {% else %}
-                <a href="{{ url_for('index', ma_the_loai=category.ma_the_loai) }}" class="list-group-item">
-                    {{ category.ten_the_loai }}
-                </a>
-                {% endif %}
-                {% endfor %}
-            </div>
-        </div>
-
         <!-- Product Image -->
-        <div class="col-md-5">
+        <div class="col-md-6">
             <div class="card mt-4">
-                <img src="{{ sach.image }}" class="card-img-top img-fluid rounded" alt="{{ sach.ten_sach }}">
+                <img src="{{ sach.image }}" class="card-img-top product-image" alt="{{ sach.ten_sach }}">
             </div>
         </div>
 
         <!-- Product Details -->
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card mt-4">
                 <div class="card-body">
                     <h2 class="text-info">{{ sach.ten_sach }}</h2>
                     <h3 class="text-danger">{{ "{:,.0f}".format(sach.gia) }} VND</h3>
-                    <p class="text-muted">Số lượng trong kho: {{ sach.so_luong }}</p>
+                    <p class="text-muted">Số lượng trong kho: <span id="stockQuantity">{{ sach.so_luong }}</span></p>
 
                     <!-- Additional Book Info -->
                     <div class="book-details mb-3">
                         <p class="mb-1"><strong>Tác giả:</strong> {{ sach.tac_gia.ten_tac_gia }}</p>
                         <p class="mb-1"><strong>Thể loại:</strong> {{ sach.the_loai.ten_the_loai }}</p>
                     </div>
+
                     <!-- Action Buttons -->
                     <div class="mt-3">
                         {% if sach.so_luong > 0 %}
-                        <a href="#" id="mua-ngay" class="btn btn-success"
-                           onclick="addToCart({{ sach.ma_sach }}, '{{ sach.ten_sach }}', {{ sach.gia }})">Đặt hàng</a>
+                            <button id="orderButton" class="btn btn-success w-100 mb-2"
+                                    onclick="addToCart({{ sach.ma_sach }}, '{{ sach.ten_sach }}', {{ sach.gia }}, {{ sach.so_luong }})">
+                                <i class="fas fa-shopping-cart"></i> Đặt hàng
+                            </button>
+                            {% if sach.so_luong <= 5 %}
+                                <div class="stock-warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Chỉ còn {{ sach.so_luong }} sản phẩm trong kho!
+                                </div>
+                            {% endif %}
                         {% else %}
-                        <button class="btn btn-secondary" disabled>
-                            Hết hàng
-                        </button>
+                            <button class="btn btn-secondary w-100 mb-2" disabled>
+                                <i class="fas fa-times-circle"></i> Hết hàng
+                            </button>
                         {% endif %}
-                        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
-                            Quay lại
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-arrow-left"></i> Quay lại
                         </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-{% if current_user.is_authenticated %}
-<div class="form-group">
-    <textarea class="form-control" id="commentId"
-              placeholder="Nhập nội dung bình luận:"></textarea>
-</div>
-<input type="button"
-       onclick="addComment({{sach.ma_sach}})"
-       class="btn btn-primary" value="Bình luận"/>
-
-{% else %}
-<a href="{{ url_for('logout_my_user') }}">Đăng nhập để bình luận...</a>
-{% endif %}
-
-<!-- Đặt phần hiển thị comments ở đây -->
-<div class="container mt-4">
-    <div id="commentArea">
-        {% for comment in sach.comments %}
-        <div class="row mb-3">
-            <div class="col-md-1">
-                <img src="{{ comment.user.avatar }}"
-                     class="img-fluid rounded-circle" alt="user avatar"/>
-            </div>
-            <div class="col-md-10">
-                <p class="mb-1">{{ comment.content }}</p>
-                <small class="text-muted">
-                    {{ comment.created_date.strftime('%Y-%m-%d %H:%M') }}
-                </small>
-            </div>
+    <!-- Comment Section -->
+    <div class="comment-section mt-4">
+        <h4 class="mb-4">Bình luận</h4>
+        {% if current_user.is_authenticated %}
+        <div class="comment-input">
+            <textarea class="form-control" id="commentId" rows="3"
+                      placeholder="Nhập nội dung bình luận..."></textarea>
+            <button class="btn btn-primary mt-2" onclick="addComment({{sach.ma_sach}})">
+                <i class="fas fa-comment"></i> Bình luận
+            </button>
         </div>
-        {% endfor %}
+        {% else %}
+        <div class="alert alert-info">
+            <a href="{{ url_for('login_process') }}" class="alert-link">Đăng nhập để bình luận</a>
+        </div>
+        {% endif %}
+
+        <div id="commentArea">
+            {% for comment in sach.comments %}
+            <div class="comment-item">
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <img src="{{ comment.user.avatar }}" class="comment-avatar rounded-circle">
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="mb-1">{{ comment.user.name }}</h6>
+                        <p class="mb-1">{{ comment.content }}</p>
+                        <small class="text-muted">
+                            {{ comment.created_date.strftime('%Y-%m-%d %H:%M') }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Toast thông báo -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="cartToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-success text-white">
+            <i class="fas fa-check-circle me-2"></i>
+            <strong class="me-auto">Thông báo</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="cartToastMessage"></div>
     </div>
 </div>
 
 <script>
-    document.getElementById('them-vao-gio').addEventListener('click', function() {
-        const quantity = document.getElementById('so-luong').value;
-        // thêm cart
+// Khởi tạo toast
+const cartToast = new bootstrap.Toast(document.getElementById('cartToast'));
 
-        // hiển thi thông báo thành công
-        document.getElementById('thong-bao').style.display = 'block';
-        setTimeout(() => {
-            document.getElementById('thong-bao').style.display = 'none';
-        }, 3000);
-    });
+// Hiển thị thông báo
+function showToast(message, isSuccess = true) {
+    const toastEl = document.getElementById('cartToast');
+    const toastHeader = toastEl.querySelector('.toast-header');
+    const toastBody = document.getElementById('cartToastMessage');
+
+    toastHeader.className = `toast-header ${isSuccess ? 'bg-success' : 'bg-danger'} text-white`;
+    toastBody.textContent = message;
+
+    cartToast.show();
+}
+
+// Thêm vào giỏ hàng
+async function addToCart(id, name, price, stock) {
+    try {
+        // Kiểm tra số lượng trong giỏ hiện tại
+        const cart = JSON.parse(sessionStorage.getItem('cart')) || {};
+        const currentQuantity = cart[id] ? cart[id].quantity : 0;
+
+        const orderQuantity = 1; // Mặc định thêm 1 sản phẩm
+
+        if (currentQuantity + orderQuantity > stock) {
+            showToast(`Không thể thêm sản phẩm. Đã đạt giới hạn số lượng trong kho!`, false);
+            return;
+        }
+
+        const response = await fetch('/api/add-cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'ma_sach': id,
+                'ten_sach': name,
+                'gia': price,
+                'so_luong': orderQuantity
+            })
+        });
+
+        const data = await response.json();
+
+        // Cập nhật UI
+        const counter = document.getElementById('cartCounter');
+        counter.innerText = data.total_quantity;
+
+        // Cập nhật sessionStorage
+        cart[id] = {
+            quantity: currentQuantity + orderQuantity,
+            name: name,
+            price: price
+        };
+        sessionStorage.setItem('cart', JSON.stringify(cart));
+
+        showToast(`Đã thêm "${name}" vào giỏ hàng`);
+
+    } catch (error) {
+        console.error('Lỗi:', error);
+        showToast('Có lỗi xảy ra khi thêm vào giỏ hàng!', false);
+    }
+}
+
+// Kiểm tra số lượng trong kho khi tải trang
+document.addEventListener('DOMContentLoaded', function() {
+    const stock = parseInt(document.getElementById('stockQuantity').textContent);
+    const orderButton = document.getElementById('orderButton');
+
+    if (stock <= 0 && orderButton) {
+        orderButton.disabled = true;
+        orderButton.innerHTML = '<i class="fas fa-times-circle"></i> Hết hàng';
+    }
+
+    // Kiểm tra số lượng trong giỏ hàng khi tải trang
+    const cart = JSON.parse(sessionStorage.getItem('cart')) || {};
+    const id = document.querySelector('[onclick]')?.getAttribute('onclick')?.match(/addToCart\((\d+)/)?.[1];
+
+    if (id && cart[id]) {
+        const currentQuantity = cart[id].quantity;
+        const remainingStock = stock - currentQuantity;
+
+        if (remainingStock <= 0) {
+            if (orderButton) {
+                orderButton.disabled = true;
+                orderButton.innerHTML = '<i class="fas fa-times-circle"></i> Đã đạt giới hạn';
+            }
+        }
+    }
+});
 </script>
-
 {% endblock %}
-
-
-
-
-
-
-

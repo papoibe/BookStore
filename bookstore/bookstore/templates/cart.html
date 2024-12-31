@@ -32,15 +32,15 @@
             </div>
         </ul>
 
-       <div class="navbar-nav d-flex align-items-center">
+        <div class="navbar-nav d-flex align-items-center">
             <a class="nav-link text-success" href="/history" style="margin-right: 10px;">
                 <i class="fas fa-history" style="margin-right: 5px;"></i>Lịch sử đặt hàng</a>
             <a class="nav-link text-success" href="{{ url_for('cart') }}">
                 <i class="fas fa-shopping-cart"></i>
                 Giỏ hàng
                 <span class="badge badge-info" id="cartCounter" style="color: orange">
-            {{ cart_stats.total_quantity }}
-        </span>
+                    {{ cart_stats.total_quantity }}
+                </span>
             </a>
         </div>
 
@@ -54,13 +54,12 @@
                 &#9940;Đăng xuất
             </a>
         </div>
-        {% else %}
+        {% else %} //hiển thị đăng nhập, đăng ký
         <div class="menu d-flex">
             <a class="nav-link text-info" href="/login">&#128100; Đăng nhập</a>
             <a class="nav-link text-info" href="/register">&#128101; Đăng ký</a>
         </div>
         {% endif %}
-    </div>
     </div>
 </nav>
 {% endblock %}
@@ -70,52 +69,742 @@ Giỏ hàng
 {% endblock %}
 
 {% block content %}
+<style>
+    .cart-container {
+        margin: 40px auto;
+        max-width: 1200px;
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
 
-<br>
-<h1 class="text-center text-danger">GIỎ HÀNG</h1>
+    .cart-title {
+        color: #2C3E50;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2.5em;
+        font-weight: bold;
+    }
 
-{% if 'cart' in session and session['cart'] %}
-<table class="table">
-    <tr>
-        <th>Mã sản phẩm</th>
-        <th>Tên sản phẩm</th>
-        <th>Đơn giá</th>
-        <th>Số lượng</th>
-    </tr>
+    .cart-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-bottom: 30px;
+    }
+
+    .cart-table th {
+        background: #4CAF50;
+        color: white;
+        padding: 15px;
+        font-weight: 500;
+        text-align: left;
+        border-radius: 5px 5px 0 0;
+    }
+
+    .cart-table td {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+    }
+
+    .cart-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .cart-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .quantity-input {
+        width: 80px;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    .delete-btn {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .delete-btn:hover {
+        background-color: #c82333;
+        transform: translateY(-2px);
+    }
+
+    .cart-summary {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+
+    .cart-summary h5 {
+        color: #2C3E50;
+        margin-bottom: 15px;
+        font-size: 1.2em;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+    }
+
+    .btn-checkout {
+        padding: 12px 25px;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-checkout:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    /* Modal styles */
+    .order-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        animation: fadeIn 0.3s ease;
+        overflow-y: auto;
+    }
+
+    .order-modal-content {
+        position: relative;
+        background: white;
+        margin: 5% auto;
+        padding: 0;
+        width: 90%;
+        max-width: 500px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        animation: slideIn 0.3s ease;
+    }
+
+    .order-modal-header {
+        background: #4CAF50;
+        color: white;
+        padding: 20px;
+        border-radius: 15px 15px 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .order-modal-header h4 {
+        margin: 0;
+        font-size: 1.4em;
+    }
+
+    .close-modal {
+        color: white;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .close-modal:hover {
+        transform: scale(1.1);
+    }
+
+    .order-modal-body {
+        padding: 25px;
+    }
+
+    .order-info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 15px 0;
+    }
+
+    .order-info p {
+        margin: 10px 0;
+        font-size: 1.1em;
+        color: #2c3e50;
+    }
+
+    .order-info i {
+        margin-right: 10px;
+        color: #4CAF50;
+    }
+
+    .confirm-text {
+        font-size: 1.2em;
+        color: #2c3e50;
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .order-modal-footer {
+        padding: 20px;
+        border-top: 1px solid #dee2e6;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .modal-btn {
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .modal-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Payment methods styles */
+    .payment-methods {
+        margin: 20px 0;
+        padding: 0 15px;
+    }
+
+    .payment-option {
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        background: white;
+    }
+
+    .payment-option:hover {
+        background: #f8f9fa;
+        border-color: #2196F3;
+    }
+
+    .payment-option.selected {
+        border-color: #2196F3;
+        background: #e3f2fd;
+    }
+
+    .payment-option label {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin: 0;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .payment-logo {
+        height: 40px;
+        width: auto;
+        object-fit: contain;
+    }
+
+    #qrCodeContainer {
+        display: none;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin: 15px;
+        text-align: center;
+    }
+
+    .qr-placeholder {
+        width: 200px;
+        height: 200px;
+        margin: 0 auto;
+        background: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateY(-10%);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .empty-cart {
+        text-align: center;
+        padding: 50px 20px;
+    }
+
+    .empty-cart i {
+        font-size: 4em;
+        color: #dee2e6;
+        margin-bottom: 20px;
+    }
+
+    .empty-cart p {
+        color: #6c757d;
+        font-size: 1.2em;
+        margin-bottom: 30px;
+    }
+
+    .continue-shopping {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 25px;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+    }
+
+
+</style>
+<!-- Nội dung giỏ hàng -->
+<div class="cart-container">
+    <h1 class="cart-title">Giỏ hàng</h1>
+
+    {% if 'cart' in session and session['cart'] %}
+    <table class="cart-table">
+        <thead>
+            <tr>
+                <th>Mã sản phẩm</th>
+                <th>Tên sản phẩm</th>
+                <th>Đơn giá</th>
+                <th>Số lượng</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+      <tbody>
     {% for c in session['cart'].values() %}
     <tr>
         <td>{{ c.id }}</td>
         <td>{{ c.name }}</td>
-        <td>{{ c.price }}</td>
+        <td>{{ "{:,.0f}".format(c.price) }} VNĐ</td>
         <td>
-            <div class="form-group">
-            <input type="number" min="1" value="{{ c.quantity }}"
-                   class="form-control" onchange="updateQuantity('{{ c.id }}', this.value)">
-            </div>
+            <input type="number"
+           min="1"
+           value="{{ c.quantity }}"
+           class="quantity-input"
+           onchange="updateQuantity('{{ c.id }}', this.value, {{ c.stock }})">
         </td>
         <td>
-            <input type="button" value="Xóa" class="btn btn-danger"
-            onclick="deleteCart({{ c.id }})" />
+            <button class="delete-btn" onclick="deleteCart('{{ c.id }}')">
+                <i class="fas fa-trash-alt"></i> Xóa
+            </button>
         </td>
     </tr>
-
     {% endfor %}
-</table>
+      </tbody>
+    </table>
+<!--Hiển thị tổng số lượng và tổng tiền -->
+    <div class="cart-summary">
+        <h5>Tổng sản phẩm: {{ stats.total_quantity }}</h5>
+        <h5>Tổng tiền: {{ "{:,.0f}".format(stats.total_amount) }} VNĐ</h5>
+    </div>
 
-<div class="alert alert-info">
-    <h5>Tổng sản phẩm: {{ stats.total_quantity}}</h5>
-    <h5>Tổng tiền: {{ stats.total_amount}} đồng</h5>
+<!-- Các nút hành động cho người dùng bình luận-->
+    {% if current_user.is_authenticated %}
+    <div class="action-buttons">
+        <button class="btn btn-success btn-checkout" onclick="pay()">
+            <i class="fas fa-credit-card"></i> Thanh toán
+        </button>
+        <button class="btn btn-primary btn-checkout" onclick="order()">
+            <i class="fas fa-shopping-cart"></i> Đặt hàng
+        </button>
+    </div>
+    {% else %}
+    <div class="text-center">
+        <a href="{{ url_for('login_process', next='cart') }}" class="btn btn-link">
+            Đăng nhập để thanh toán <i class="fas fa-sign-in-alt"></i>
+        </a>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-cart">
+        <i class="fas fa-shopping-cart"></i>
+        <p>Không có sản phẩm nào trong giỏ!</p>
+        <a href="/" class="btn btn-primary continue-shopping">
+            <i class="fas fa-shopping-basket"></i>
+            Tiếp tục mua sắm
+        </a>
+    </div>
+    {% endif %}
 </div>
 
-{% if current_user.is_authenticated %}
-<br>
-<input type="button" value="Thanh toán" class="btn btn-success" onclick="pay()"/>
-<input type="button" value="Đặt hàng" class="btn btn-danger" onclick="order()"/>
-{% else %}
-<a href="{{ url_for('login_process', next='cart') }}">Đăng nhập để thanh toán...</a>
-{% endif %}
+<!-- Order Modal -->
+<div id="orderModal" class="order-modal">
+    <div class="order-modal-content">
+        <div class="order-modal-header">
+            <h4><i class="fas fa-shopping-cart"></i> Xác nhận đơn hàng</h4>
+            <span class="close-modal">&times;</span>
+        </div>
+        <div class="order-modal-body">
+            <div class="order-info">
+                <h5>Thông tin đơn hàng của bạn:</h5>
+                <p><i class="fas fa-box"></i> Tổng sản phẩm: {{ stats.total_quantity }}</p>
+                <p><i class="fas fa-money-bill-wave"></i> Tổng tiền: {{ "{:,.0f}".format(stats.total_amount) }} VNĐ</p>
+            </div>
+            <p class="confirm-text">Bạn có chắc chắn muốn đặt hàng không?</p>
+        </div>
+        <div class="order-modal-footer">
+            <button class="btn btn-secondary modal-btn" id="cancelOrder">
+                <i class="fas fa-times"></i> Hủy bỏ
+            </button>
+            <button class="btn btn-success modal-btn" id="confirmOrder">
+                <i class="fas fa-check"></i> Xác nhận
+            </button>
+        </div>
+    </div>
+</div>
 
-{% else %}
-<p><i>Không có sản phẩm nào trong giỏ!!</i></p>
-{% endif %}
+<!-- Payment Modal -->
+<div id="paymentModal" class="order-modal">
+    <div class="order-modal-content">
+        <div class="order-modal-header" style="background: #2196F3;">
+            <h4><i class="fas fa-credit-card"></i> Thanh toán</h4>
+            <span class="close-modal" id="closePaymentModal">&times;</span>
+        </div>
+        <div class="order-modal-body">
+            <!--Thông tin thanh toán  -->
+            <div class="order-info">
+                <h5>Chi tiết thanh toán:</h5>
+                <p><i class="fas fa-box"></i> Tổng sản phẩm: {{ stats.total_quantity }}</p>
+                <p><i class="fas fa-money-bill-wave"></i> Tổng tiền: {{ "{:,.0f}".format(stats.total_amount) }} VNĐ</p>
+            </div>
+            <!-- Các phương thức thanh toán -->
+            <div class="payment-methods">
+                <h6 class="mt-4 mb-3">Chọn phương thức thanh toán:</h6>
+
+                <div class="payment-option" onclick="selectPayment('vnpay')">
+                    <label>
+                        <input type="radio" name="payment" value="vnpay">
+                        <img src="https://vnpay.vn/assets/images/logo-icon/logo-primary.svg" alt="VNPAY" class="payment-logo">
+                        <span>Thanh toán qua VNPAY</span>
+                    </label>
+                </div>
+
+                <div class="payment-option" onclick="selectPayment('momo')">
+                    <label>
+                        <input type="radio" name="payment" value="momo">
+                        <img src="https://developers.momo.vn/v3/vi/assets/images/icon-52bd5808cecdb1970e1aeec3c31a3ee1.png" alt="MoMo" class="payment-logo">
+                        <span>Thanh toán qua MoMo</span>
+                    </label>
+                </div>
+
+                <div class="payment-option" onclick="selectPayment('banking')">
+                    <label>
+                        <input type="radio" name="payment" value="banking">
+                        <i class="fas fa-university payment-icon"></i>
+                        <span>Chuyển khoản ngân hàng</span>
+                    </label>
+                </div>
+
+                <div id="qrCodeContainer">
+                    <div class="qr-placeholder">
+                        <img id="qrCode" alt="QR Code" style="width: 200px; height: 200px; display: none;">
+                        <div id="qrLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Đang tải mã QR...</p>
+                        </div>
+                    </div>
+                    <p class="mt-2">Quét mã QR để thanh toán</p>
+                </div>
+
+                <div id="bankingInfo" class="banking-info" style="display: none;">
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <h6 class="mb-3">Thông tin chuyển khoản:</h6>
+                        <p><strong>Ngân hàng:</strong> BIDV</p>
+                        <p><strong>Số tài khoản:</strong> 1234567890</p>
+                        <p><strong>Chủ tài khoản:</strong> LE NGUYEN PHUOC THINH</p>
+                        <p><strong>Nội dung:</strong> <span id="bankingReference"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="order-modal-footer">
+            <button class="btn btn-secondary modal-btn" onclick="closePaymentModal()">
+                <i class="fas fa-times"></i> Hủy bỏ
+            </button>
+            <button class="btn btn-success modal-btn" onclick="confirmPayment()">
+                <i class="fas fa-check"></i> Xác nhận thanh toán
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    <!--    hiển thị modal đặt hàng -->
+function showOrderModal() {
+    document.getElementById('orderModal').style.display = 'block';
+}
+    <!-- Đóng modal đặt hàng-->
+function closeOrderModal() {
+    document.getElementById('orderModal').style.display = 'none';
+}
+    <!--xử lý đặt hàng-->
+function order() {
+    showOrderModal();
+
+    // Gắn sự kiện đóng modal
+    document.querySelector('.close-modal').onclick = closeOrderModal;
+    document.getElementById('cancelOrder').onclick = closeOrderModal;
+
+    // Đóng modal khi click bên ngoài
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('orderModal')) {
+            closeOrderModal();
+        }
+    }
+
+    // Xử lý khi xác nhận đặt hàng
+    document.getElementById('confirmOrder').onclick = function() {
+        fetch('/api/order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json())
+          .then(data => {
+              if (data.code == 200) {
+                  sessionStorage.removeItem('cart'); // Xóa cart storage khi đặt hàng thành công
+                  location.reload();
+              } else {
+                  alert(`Lỗi đặt hàng: ${data.message || 'Không xác định'}`);
+              }
+              closeOrderModal();
+          })
+          .catch(err => {
+              console.error('Lỗi khi gọi API:', err);
+              alert('Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại!');
+              closeOrderModal();
+          });
+    }
+}
+
+
+// Kiểm tra giá trị nhập vào
+function validateQuantity(input, stock) {
+    let value = parseInt(input.value);
+    if (value > stock) {
+        input.value = stock;
+        showToast(`Số lượng tối đa có thể đặt là ${stock}`, false);
+    } else if (value < 1) {
+        input.value = 1;
+    }
+}
+
+// Xử lý cập nhật sau khi đã kiểm tra
+function validateAndUpdateQuantity(input, stock, productId) {
+    let value = parseInt(input.value);
+    if (!value) value = 1;
+
+    if (value > stock) {
+        value = stock;
+        input.value = stock;
+        showToast(`Số lượng tối đa có thể đặt là ${stock}`, false);
+    } else if (value < 1) {
+        value = 1;
+        input.value = 1;
+    }
+
+    updateQuantity(productId, value);
+}
+
+// Cập nhật số lượng sản phẩm
+function updateQuantity(productId, quantity, stock) {
+    fetch('/update-cart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            id: productId,
+            quantity: parseInt(quantity)
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Hiển thị thông báo từ server
+        alert(data.message);
+
+        if (data.success) {
+            const cart = JSON.parse(sessionStorage.getItem('cart')) || {};
+            cart[productId] = {
+                ...cart[productId],
+                quantity: parseInt(quantity)
+            };
+            sessionStorage.setItem('cart', JSON.stringify(cart));
+            location.reload();
+        } else {
+            location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra trong quá trình cập nhật.');
+        location.reload();
+    });
+}
+
+// Xóa sản phẩm khỏi giỏ hàng
+function deleteCart(productId) {
+    if(confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?')) {
+        fetch(`/api/delete-cart/${productId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.code === 200) {
+                // Xóa sản phẩm khỏi sessionStorage
+                const cart = JSON.parse(sessionStorage.getItem('cart')) || {};
+                delete cart[productId];
+                sessionStorage.setItem('cart', JSON.stringify(cart));
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(err => {
+            console.error('Lỗi khi xóa sản phẩm:', err);
+            alert('Có lỗi xảy ra khi xóa sản phẩm. Vui lòng thử lại!');
+        });
+    }
+}
+
+// Hiển thị modal thanh toán
+function pay() {
+    const modal = document.getElementById('paymentModal');
+    const closeBtn = document.getElementById('closePaymentModal');
+    modal.style.display = 'block';
+
+    // Tạo mã tham chiếu ngẫu nhiên cho chuyển khoản
+    const refNumber = 'DAIHOCMO' + Date.now().toString().slice(-5);
+    document.getElementById('bankingReference').textContent = refNumber;
+
+    // Gắn sự kiện đóng modal
+    closeBtn.onclick = closePaymentModal;
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closePaymentModal();
+        }
+    }  .then(data => {
+        if (data.code == 200) {
+            sessionStorage.removeItem('cart');
+            location.reload();
+        }
+    });
+}
+// Đóng modal thanh toán và reset form
+function closePaymentModal() {
+    document.getElementById('paymentModal').style.display = 'none';
+    // Reset payment selections
+    document.getElementById('qrCodeContainer').style.display = 'none';
+    document.getElementById('bankingInfo').style.display = 'none';
+    document.querySelectorAll('input[name="payment"]').forEach(input => input.checked = false);
+    document.querySelectorAll('.payment-option').forEach(option => {
+        option.classList.remove('selected');
+    });
+}
+
+// Xử lý chọn phương thức thanh toán
+function selectPayment(method) {
+    // Xóa class selected từ tất cả options
+    document.querySelectorAll('.payment-option').forEach(option => {
+        option.classList.remove('selected');
+    });
+
+    // Thêm class selected vào option được chọn
+    const selectedOption = document.querySelector(`input[value="${method}"]`).closest('.payment-option');
+    selectedOption.classList.add('selected');
+
+    // Ẩn tất cả các container thông tin thanh toán
+    document.getElementById('qrCodeContainer').style.display = 'none';
+    document.getElementById('bankingInfo').style.display = 'none';
+
+    // Hiển thị thông tin theo phương thức thanh toán
+    if (method === 'vnpay' || method === 'momo') {
+        const qrContainer = document.getElementById('qrCodeContainer');
+        const qrImage = document.getElementById('qrCode');
+        const qrLoading = document.getElementById('qrLoading');
+
+        qrContainer.style.display = 'block';
+        qrImage.style.display = 'none';
+        qrLoading.style.display = 'block';
+
+
+        qrImage.src = '';
+
+        // Set QR code source based on payment method
+        if (method === 'vnpay') {
+               qrImage.src = 'https://res.cloudinary.com/djwddqkvp/image/upload/v1735470694/z6177740033155_591d2401aec4c8852c5791d983bf8f59_tqzlxw.jpg';
+        } else {
+              qrImage.src = 'https://res.cloudinary.com/djwddqkvp/image/upload/v1735469668/z6177678949814_fc8d2819a37137944e8deb5eee82b64d_dwyib6.jpg';
+        }
+
+        // Hiển thị QR code sau khi tải xong
+        qrImage.onload = function() {
+            qrLoading.style.display = 'none';
+            qrImage.style.display = 'block';
+        };
+    } else if (method === 'banking') {
+        document.getElementById('bankingInfo').style.display = 'block';
+    }
+}
+
+function confirmPayment() {
+    // Kiểm tra đã chọn phương thức thanh toán chưa
+    const selectedMethod = document.querySelector('input[name="payment"]:checked');
+    if (!selectedMethod) {
+        alert('Vui lòng chọn phương thức thanh toán!');
+        return;
+    }
+
+    // Gọi API xử lý thanh toán
+    fetch('/api/pay', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            method: selectedMethod.value
+        })
+    }).then(res => res.json())
+      .then(data => {
+          if (data.code == 200) {
+              alert('Thanh toán thành công!');
+              location.reload();
+          } else {
+              alert(`Lỗi thanh toán: ${data.message || 'Không xác định'}`);
+          }
+          closePaymentModal();
+      })
+      .catch(err => {
+          console.error('Lỗi khi thanh toán:', err);
+          alert('Có lỗi xảy ra khi thanh toán. Vui lòng thử lại!');
+          closePaymentModal();
+      });
+}
+</script>
 {% endblock %}

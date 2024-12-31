@@ -121,7 +121,6 @@ function deleteCart(productId) {
     });
 }
 
-
 function addComment(maSach) {
     let content = document.getElementById('commentId');
     if (content !== null) {
@@ -164,3 +163,6 @@ function addComment(maSach) {
         });
     }
 }
+
+
+

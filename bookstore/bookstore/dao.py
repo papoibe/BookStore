@@ -212,8 +212,17 @@ def get_don_hang_by_ma_KH(id):
 def check_qua_han(id):
     data = db.session.query(DonHang).filter(DonHang.ma_khach_hang == id).all()
     for d in data:
-        if (datetime.now()-d.ngay_tao).days > get_config_by_role(ConFigRole.QUA_HAN).value:
+        # nếu ngày đã quá hạn và trạng thái đặt là: đã đặt mới xử lý
+        if ((datetime.now()-d.ngay_tao).days > get_config_by_role(ConFigRole.QUA_HAN).value and
+                d.trang_thai_thanh_toan==TrangThaiThanhToan.DA_DAT):
+
             d.update_trang_thai_don(TrangThaiThanhToan.HUY)
+
+            # # cập nhật lại số lượng
+            chi_tiet = get_chi_tiet_by_ma_hoa_don(d.ma_don_hang)
+            for c in chi_tiet:
+                get_sach_by_id(c[0]).cap_nhat_so_luong((c[1]))
+
 def get_don_hang_by_id(id):
     return db.session.query(DonHang).filter(DonHang.ma_don_hang == id).first()
 
@@ -269,28 +278,37 @@ def add_receipt(cart, status):
     if not cart:
         raise ValueError("Giỏ hàng trống.")
 
-    if cart:
-        receipt = DonHang(
-            ma_khach_hang=current_user.id,
-            ngay_tao=datetime.now(),
-            trang_thai_thanh_toan=status
-        )
-        db.session.add(receipt)
-        db.session.flush()  # Đẩy dữ liệu tạm để lấy ma_don_hang
+    receipt = DonHang(
+        ma_khach_hang=current_user.id,
+        ngay_tao=datetime.now(),
+        trang_thai_thanh_toan=status
+    )
+    db.session.add(receipt)
+    db.session.flush()  # Đẩy dữ liệu tạm để lấy ma_don_hang
 
-        for c in cart.values():
-            d = ChiTietDonHang(
-                ma_don_hang=receipt.ma_don_hang,
-                ma_sach=c['id'],
-                so_luong=c['quantity'],
-                gia=c['price']
-            )
-            sach=get_sach_by_id(c['id'])
-            sach.thanh_toan(c['quantity'])
-        db.session.add(d)
-    db.session.commit()
+    # Kiểm tra số lượng sách trong kho
+    for c in cart.values():
+        sach = get_sach_by_id(c['id'])
+        if sach.so_luong < c['quantity']:
+            raise ValueError(f"Sách '{sach.ten}' không đủ số lượng. Hiện có {sach.so_luong}, cần {c['quantity']}.")
+
+    for c in cart.values():
+        # Tạo chi tiết đơn hàng
+        d = ChiTietDonHang(
+            ma_don_hang=receipt.ma_don_hang,
+            ma_sach=c['id'],
+            so_luong=c['quantity'],
+            gia=c['price']
+        )
+        db.session.add(d)  # Thêm chi tiết đơn hàng vào session
+
+        # Lấy thông tin sách từ db và cập nhật
+        sach = get_sach_by_id(c['id'])
+        sach.thanh_toan(c['quantity'])
+
+    db.session.commit()  # Lưu tất cả thay đổi vào database
 
 if __name__=='__main__':
-    print(fre_month_onl(12,2024))
+    check_qua_han(2)
 
 
